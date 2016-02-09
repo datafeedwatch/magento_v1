@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+  <tabs>
+    <datafeedwatch translate="label" module="connector">
+      <label>DataFeedWatch</label>
+      <sort_order>666</sort_order>
+    </datafeedwatch>
+  </tabs>
+</config>

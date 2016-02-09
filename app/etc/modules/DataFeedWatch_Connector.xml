@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <DataFeedWatch_Connector>
+      <active>true</active>
+      <codePool>community</codePool>
+      <depends>
+        <Mage_Api />
+          <Mage_CatalogRule/>
+          <Mage_SalesRule/>
+      </depends>
+    </DataFeedWatch_Connector>
+  </modules>
+</config>

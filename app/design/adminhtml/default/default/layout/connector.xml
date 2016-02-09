@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_connectorsettings_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/connector/connector.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>connector.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="connector/adminhtml_settings_edit" name="settings"/>
+        </reference>
+    </adminhtml_connectorsettings_index>
+</layout>
