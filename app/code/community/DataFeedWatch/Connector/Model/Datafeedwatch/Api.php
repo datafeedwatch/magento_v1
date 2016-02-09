@@ -129,56 +129,19 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function product_count($options = array())
     {
-        $products = array();
-        $dataFeedWatchHelper = Mage::helper('connector');
-        /* var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
-        $collection = $dataFeedWatchHelper->prepareCollection($options);
-
-        foreach($collection as $product){
-
-            if ($product->getTypeId() == "simple") {
-                $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($product->getId());
-                if (!$parentIds) {
-                    $parentIds = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
-                    if (isset($parentIds[0])) {
-                        $isConfigurable = true;
-                    }
-                }
-
-                if (isset($parentIds[0])) {
-                    $parent_product = Mage::getModel('catalog/product')->load($parentIds[0]);
-                    /* @var $parent_product Mage_Catalog_Model_Product_Type_Configurable */
-                    while (!$parent_product->getId()) {
-                        if (count($parentIds) > 1) {
-                            //parent not found, remove and retry with next one
-                            array_shift($parentIds);
-                            $parent_product = Mage::getModel('catalog/product')->load($parentIds[0]);
-                        } else {
-                            break;
-                        }
-                    }
-
-                    //do not include variant products that will not be fetched by products method
-                    if ($dataFeedWatchHelper->shouldSkipProduct($product,$parent_product)) {
-                        continue;
-                    }
-                }
-                $products[] = $product->getId();
-            }else {
-                $products[] = $product->getId();
+        /** var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
+        $dataFeedWatchHelper    = Mage::helper('connector');
+        $collection             = $dataFeedWatchHelper->prepareCollection($options);
+        $collection->addAttributeToSelect('visibility');
+        $counter                = 0;
+        foreach ($collection as $product) {
+            $parent_product = $dataFeedWatchHelper->getParentProductFromChild($product);
+            if (!$dataFeedWatchHelper->shouldSkipProduct($product, $parent_product)) {
+                $counter++;
             }
         }
 
-        $numberOfProducts = count($products);
-
-        /* @deprecated since this doesn't apply filters based on status
-        $numberOfProducts = 0;
-        if (!empty($collection)) {
-            $numberOfProducts = $collection->getSize();
-        }
-        */
-
-        return $numberOfProducts;
+        return $counter;
     }
 
     /**
@@ -524,6 +487,7 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
         /* @var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
 
         $fetchList = $dataFeedWatchHelper->getUpdatedProductList($options);
+        $fetchList = array_unique($fetchList);
 
         return count($fetchList);
     }
