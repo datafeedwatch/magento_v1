@@ -1,3 +1,65 @@
 input#additional_attributes_0_all {
     margin-left: -30px;
 }
+
+.adminhtml-connectorsettings-index .logic {
+    display:inline-block;
+
+}
+
+.adminhtml-connectorsettings-index li.connector_checkboxes{
+    border-bottom:1px solid #ddd;
+}
+
+.adminhtml-connectorsettings-index li.connector_checkboxes label{
+    width: 50%;
+    min-width: 200px;
+    display: inline-block;
+}
+.adminhtml-connectorsettings-index li.connector_checkboxes .logic > input.child {
+    margin-right: 36px;
+}
+
+.adminhtml-connectorsettings-index li.connector_checkboxes .logic > input.parent {
+    margin-right: 41px;
+}
+
+.adminhtml-connectorsettings-index li.connector_checkboxes .logic > input.child_then_parent {
+
+}
+
+.adminhtml-connectorsettings-index li.connector_checkboxes.hints .logic{
+    padding-left:15px;
+}
+
+.adminhtml-connectorsettings-index .logic_introduction{
+    margin-top:50px;
+}
+
+.adminhtml-connectorsettings-index li.connector_checkboxes.hints span.help {
+    line-height: 26px;
+    padding-left: 20px;
+    color: #000;
+    background: url(/skin/adminhtml/default/default/images/fam_help.gif) no-repeat 0 50%;
+}
+
+.connector_checkboxes.hints .help {
+    position: relative;
+}
+
+.connector_checkboxes.hints .help .help-tooltip {
+    display: none;
+    position: absolute;
+    width: 300px;
+    height: auto;
+    z-index: 100;
+    border-radius:5px;
+    border:1px solid #ccc;
+    background-color: #eee;
+    padding:7px;
+}
+
+.connector_checkboxes.hints .help:hover .help-tooltip,
+.connector_checkboxes.hints .help:active .help-tooltip {
+    display: block;
+}

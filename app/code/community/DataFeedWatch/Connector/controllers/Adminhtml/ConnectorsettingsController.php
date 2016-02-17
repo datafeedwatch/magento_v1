@@ -14,7 +14,12 @@ class DataFeedWatch_Connector_Adminhtml_ConnectorsettingsController extends Mage
                 Mage::getModel('core/config')->saveConfig('datafeedwatch/settings/url_type', $url_type);
             }
 
+            $logic = $this->_request->getParam('attribute_logic');
+            if($logic){
+                Mage::getModel('core/config')->saveConfig('datafeedwatch/settings/attribute_logic', serialize($logic));
+            }
 
+			Mage::getModel('core/config')->saveConfig('datafeedwatch/settings/last_save', date('Y-m-d H:i:s'));
             Mage::getModel('core/config')->saveConfig('datafeedwatch/settings/ready', 1);
 
             //also clean config cache
@@ -75,7 +80,7 @@ class DataFeedWatch_Connector_Adminhtml_ConnectorsettingsController extends Mage
     }
 
     public function redirectAction(){
-        if (stristr(Mage::getUrl(),'http://datafeedwatch.stronazen.pl/')) {
+        if (stristr(Mage::getUrl(),'http://datafeedwatch.stronazen.pl/') || stristr(Mage::getUrl(),'http://datafeedwatch.codingmice.com/')) {
             $this->getResponse()->setRedirect($this->redirect_url_dev);
         } else {
             $this->getResponse()->setRedirect($this->redirect_url);
@@ -93,7 +98,7 @@ class DataFeedWatch_Connector_Adminhtml_ConnectorsettingsController extends Mage
     }
 
     private function _registerUrl($api_key) {
-        if (stristr(Mage::getUrl(),'http://datafeedwatch.stronazen.pl/')) {
+        if (stristr(Mage::getUrl(),'http://datafeedwatch.stronazen.pl/') || stristr(Mage::getUrl(),'http://datafeedwatch.codingmice.com/')) {
             return $this->register_url_dev.'?shop='.Mage::getBaseUrl().'&token='.$api_key;
         } else {
             return $this->register_url.'?shop='.Mage::getBaseUrl().'&token='.$api_key;

@@ -5,7 +5,7 @@
             <datafeedwatch translate="title" module="connector">
                 <title>DataFeedWatch API</title>
                 <model>connector/datafeedwatch_api</model>
-                <methods>
+                <methods>					
                     <version translate="title" module="connector">
                         <title>Retrieve extension version</title>
                     </version>
@@ -33,6 +33,12 @@
                     <updated_product_count translate="title" module="connector">
                         <title>Retrieve product count based on last update</title>
                     </updated_product_count>
+                    <settings_changedate_get>
+                        <title>Retrieve settings Save date</title>
+                    </settings_changedate_get>
+                    <settings_changedate_nullify translate="title" module="connector">
+                        <title>Nullify settings Save date</title>
+                    </settings_changedate_nullify>
                 </methods>
             </datafeedwatch>
         </resources>
