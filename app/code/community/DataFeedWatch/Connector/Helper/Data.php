@@ -803,8 +803,8 @@ class DataFeedWatch_Connector_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     public function shouldSkipProduct($product,$parent_product){
-        if(is_object($parent_product) && $parent_product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED
-            && $product->getVisibility() == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE){
+        if(is_object($parent_product) && ($parent_product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED
+            || $product->getVisibility() == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE)){
             return true;
         }
         return false;
