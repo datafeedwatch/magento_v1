@@ -957,7 +957,7 @@ class DataFeedWatch_Connector_Helper_Data extends Mage_Core_Helper_Abstract
 
         /* Use default page if not set */
         if (!array_key_exists('page', $options)) {
-            $options['page'] = 0;
+            $options['page'] = 1;
         }
 
         /* Use default limit if not set */
