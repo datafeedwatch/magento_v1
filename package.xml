@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>DataFeedWatch_Connector</name>
-    <version>0.2.18.13</version>
+    <version>0.2.18.14</version>
     <stability>devel</stability>
     <license uri="https://opensource.org/licenses/OSL-3.0">OSL v3.0</license>
     <channel>community</channel>
@@ -9,10 +9,10 @@
     <summary>DataFeedWatch extension for Magento</summary>
     <description>DataFeedWatch enables Magento shops to optimize their product datafeed for Google Shopping and other channels&#xD;
     </description>
-    <notes>DataFeedWatch Release version 0.2.18.13 with SUPEE-6788 admin fix</notes>
+    <notes>DataFeedWatch Release version 0.2.18.14 with SUPEE-6788 admin fix</notes>
     <authors><author><name>DataFeedWatch</name><user>WordWatch</user><email>support@datafeedwatch.com</email></author></authors>
-    <date>2016-02-09</date>
-    <time>14:19:00</time>
+    <date>2016-02-19</date>
+    <time>13:09:00</time>
     <contents><target name="magecommunity"><dir name="DataFeedWatch"><dir name="Connector"><dir><dir name="Block"><dir name="Adminhtml"><file name="Connectorbackend.php" hash="e5b1e0824f6f8a0131cb9df7c43ed1e6"/><dir name="Settings"><dir name="Edit"><file name="Form.php" hash="0c45d4958ce54ab628954ac6bd33d9fd"/></dir><file name="Edit.php" hash="06a86343380547f2da83e610d4494d12"/></dir></dir></dir><dir name="Helper"><file name="Data.php" hash="79bf96679344cf581a5f8f9e4ddc2dd9"/></dir><dir name="Model"><dir name="Catalogrule"><dir name="Info"><file name="Collection.php" hash="b8920aeaa92fd18d1b6e3a73acbfab65"/></dir><file name="Info.php" hash="2ebd6a5518b8648cddd869fca691f769"/></dir><dir name="Datafeedwatch"><file name="Api.php" hash="d2ee16c3430424c5bc1ff31d4d20bdeb"/></dir><file name="Observer.php" hash="a00cf47b5e27b957183b18491421f536"/><dir name="Resource"><dir name="Catalogrule"><dir name="Info"><file name="Collection.php" hash="b8920aeaa92fd18d1b6e3a73acbfab65"/></dir><file name="Info.php" hash="3e16299f467bb84d3b48d20032f3467e"/></dir><dir name="Salesrule"><dir name="Info"><file name="Collection.php" hash="b6cd6a5f19a0c99e19a1688246cdc9a9"/></dir><file name="Info.php" hash="253ed05c71352b4a707bfa8592ee42c9"/></dir><file name="Setup.php" hash="0367daf07ad69fd53e39c7b81e24be07"/></dir><dir name="Salesrule"><dir name="Info"><file name="Collection.php" hash="b6cd6a5f19a0c99e19a1688246cdc9a9"/></dir><file name="Info.php" hash="200e06dcd82934da31af541f43eb5435"/></dir></dir><dir name="controllers"><dir name="Adminhtml"><file name="ConnectorsettingsController.php" hash="7c31c6c49826d79403ddd2061b4591c9"/></dir></dir><dir name="etc"><file name="api.xml" hash="8d542985773a3120280678349227a4a3"/><file name="config.xml" hash="b3ff9526f984e967bc9c308345d35cb6"/><file name="system.xml" hash="ab5e8d56d032ba69c930ab7879484212"/></dir><dir name="sql"><dir name="datafeedwatch_connector_setup"><file name="install-0.2.9.php" hash="326a2968b7af5a987604f880ed7c4a3c"/><file name="upgrade-0.2.10-0.2.11.ph" hash="9dcefa5cafd7efd8f192af4d9c1f0c2e"/><file name="upgrade-0.2.10-0.2.11.php" hash="9dcefa5cafd7efd8f192af4d9c1f0c2e"/><file name="upgrade-0.2.18-0.2.18.6.ph" hash="01aa13d9de38c46e91fb90f79c790da4"/><file name="upgrade-0.2.18-0.2.18.6.php" hash="01aa13d9de38c46e91fb90f79c790da4"/><file name="upgrade-0.2.9-0.2.10.ph" hash="c9e575e9925df8440eca5aa817c1d5e4"/><file name="upgrade-0.2.9-0.2.10.php" hash="c9e575e9925df8440eca5aa817c1d5e4"/></dir></dir></dir></dir></dir></target><target name="magedesign"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="layout"><file name="connector.xml" hash="c33ecbe7c4dcfd7c68fade80c7bf40c3"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="DataFeedWatch_Connector.xml" hash="0794fc14d8eefe9cd8168cc1250ad48b"/></dir></target><target name="mageskin"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="js"><dir name="connector"><file name="connector.js" hash="a4018ca934e589a6cc6014463b3fa24a"/></dir></dir><file name="connector.css" hash="15d63fea8a6b3bd0befcd326ecda3642"/></dir></dir></dir></target></contents>
     <compatible/>
     <dependencies><required><php><min>5.3.0</min><max>7.0.0</max></php></required></dependencies>
