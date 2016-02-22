@@ -838,9 +838,6 @@ class DataFeedWatch_Connector_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     public function getParentProductFromChild($product){
-
-        $dataFeedWatchHelper = Mage::helper('connector');
-
         if ($product->getTypeId() == "simple") {
 
             /* check if the product is grouped */
@@ -853,10 +850,12 @@ class DataFeedWatch_Connector_Helper_Data extends Mage_Core_Helper_Abstract
 
             /* if at least one parent has been found in child details */
             if (isset($parentIds[0])) {
-
-                $parent_product = Mage::getModel('catalog/product')->setStoreId($dataFeedWatchHelper->storeId)->load($parentIds[0]);
                 /* @var $parent_product Mage_Catalog_Model_Product_Type_Configurable */
-
+                $parent_product = Mage::getModel('catalog/product')->load($parentIds[0]);
+                $parentProductStores = $parent_product->getStoreIds();
+                if (!in_array($this->storeId, $parentProductStores) || empty($parentProductStores)) {
+                    $parent_product= Mage::getModel('catalog/product');
+                }
                 while (!$parent_product->getId()) {
                     if (count($parentIds) > 1) {
                         //parent not found, remove and retry with next one
