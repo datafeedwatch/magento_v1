@@ -277,7 +277,6 @@ document.observe('dom:loaded', function(){
     $$('input[name="required_attributes[]"]').each(
         function(e){
             e.setStyle({display:'none'});
-            e.next('label').setStyle({'margin-left':'17px'});
         }
     );
 

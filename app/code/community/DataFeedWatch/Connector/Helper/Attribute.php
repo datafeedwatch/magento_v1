@@ -70,6 +70,7 @@ class DataFeedWatch_Connector_Helper_Attribute extends DataFeedWatch_Connector_M
         "apparel_type",
         "sleeve_length",
         "fit",
+
         "gender",
         "image_url",
         'thumbnail',
@@ -93,8 +94,8 @@ class DataFeedWatch_Connector_Helper_Attribute extends DataFeedWatch_Connector_M
         "variant_spac_price_with_tax",
         /* forced child - can't let people pick */
         "weight", /* parent never has it */
-        "size",/* parent never has it */
-        "length",/* parent never has it */
+        "size",
+        "length",
         'updated_at', /* updating parent doesn't update child, so take from product in question */
         "quantity", /* because parent not having it at all */
         "dfw_default_variant",

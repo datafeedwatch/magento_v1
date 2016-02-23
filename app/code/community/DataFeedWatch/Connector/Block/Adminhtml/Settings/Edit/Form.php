@@ -70,6 +70,16 @@ When in doubt: contact <a href="mailto:support@datafeedwatch.com">support@datafe
                 </div></li>
         </ul>';
 
+        $fieldset->addField('debug','select', array(
+            'label' => Mage::helper('connector')->__('Debug'),
+            'name' => 'debug',
+            'values' => array(
+                '1' => 'Yes',
+                '0' => 'No'),
+            'after_element_html' => 'info on why products are not returned will be written to var/log/dfw_skipped_skus.log'
+        ));
+        $data["debug"] = Mage::getStoreConfig('datafeedwatch/settings/debug');
+
         $fieldset->addField('url_type','select', array(
             'label' => Mage::helper('connector')->__('URL Type'),
             'name' => 'url_type',
@@ -79,6 +89,8 @@ When in doubt: contact <a href="mailto:support@datafeedwatch.com">support@datafe
             'after_element_html' => $urlComment
         ));
         $data["url_type"] = Mage::getStoreConfig('datafeedwatch/settings/url_type');
+
+
 
         $fieldset->addField('required_attributes', 'connector_attributes',array(
             "label" => Mage::helper('connector')->__("Required Attributes"),

@@ -6,6 +6,9 @@
  */
 class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model_Product_Api
 {
+
+    private $_logFileName = 'dfw_skipped_skus.log';
+
     public $storeRootCategoryId = 2;
 
     public $categories = array();
@@ -13,6 +16,7 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
 
     public function __construct()
     {
+        /* @TODO: add check for the setings so we don't override it with smaller value! */
         //ini_set('memory_limit', '4096M');
     }
 
@@ -47,14 +51,6 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function product_ids($options = array())
     {
-        /* Force return all products when the setting save flag is set */
-        $configValue = Mage::getStoreConfig('datafeedwatch/settings/last_save');
-        if ( !empty($configValue) ) {
-            $tmpStoreFilter = $options['store'];
-            unset ($options);
-            $options['store'] = $tmpStoreFilter;
-        }
-
         $dataFeedWatchHelper = Mage::helper('connector');
         /* @var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
 
@@ -63,7 +59,7 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
         }
 
         if (!array_key_exists('per_page', $options)) {
-            $options['per_page'] = 99999999;
+            $options['per_page'] = 100;
         }
         $collection = $dataFeedWatchHelper->prepareCollection($options)
             ->getCollection()
@@ -142,15 +138,42 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
         $attributeLogicList = unserialize(Mage::getStoreConfig('datafeedwatch/settings/attribute_logic'));
 
         $dataFeedWatchHelper = Mage::helper('connector');
+
+        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+            Mage::log(__METHOD__, null, $this->_logFileName);
+            Mage::log($options, null, $this->_logFileName);
+        }
+
         /* var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
         $collection = $dataFeedWatchHelper->prepareCollection($options)
             ->getCollection();
 
+        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+            Mage::log('initial collection to parse has ' . $collection->count() . ' products', null, $this->_logFileName);
+        }
+
         foreach($collection as $product){
             $result = Mage::getModel('connector/product_result');
+            //re-setters
+            $isConfigurable = false;
+
+            //reload product to get all attributes for particular store
+            if ($dataFeedWatchHelper->storeId) {
+                $product = Mage::getModel('catalog/product')->setStoreId($dataFeedWatchHelper->storeId)->load($product->getId());
+            } else {
+                $product = Mage::getModel('catalog/product')->load($product->getId());
+            }
+
+            /* @var $product Mage_Catalog_Model_Product */
             $result->setProduct($product);
-            $result->setValueOf('product_type',$product->getTypeId());
+
+            $result
+                ->setValueOf('product_id',$product->getId())
+                ->setValueOf('sku',$product->getSku())
+                ->setValueOf('product_type',$product->getTypeId());
+
             $parent_product = $dataFeedWatchHelper->getParentProductFromChild($product);
+            /* @var $parent_product Mage_Catalog_Model_Product */
 
             if($parent_product) {
                 $result->setParentProduct($parent_product);
@@ -160,12 +183,27 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
                 }
             }
 
+            /* Do not return the product if we should skip it */
+            /* Do that only for parent & child_then_parent logic */
+            $fetchingUpdatedProducts = false; //always false in this method
+            $shouldSkipProduct = $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product);
+            if (
+                $attributeLogicList['status'] != 'child'
+                && !$fetchingUpdatedProducts
+                && $shouldSkipProduct
+            ) {
+                if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                    Mage::log('' . $product->getSku() . ' - shouldSkipProduct = ' . var_export($shouldSkipProduct, 1) . ' and status is NOT from child, but ' . $attributeLogicList['status'], null, $this->_logFileName);
+                }
+                continue;
+            }
+
 
             //get inherited status and visibility -start
             /* @TODO: This code is partially used in products method. Refactor this for re-usable method */
             foreach(array('status','visibility') as $attributeCode) {
 
-                $attributeLogic = isset($attributeLogicList[$attributeCode]) ? $attributeLogicList[$attributeCode] : null;
+                $attributeLogic = $attributeLogicList[$attributeCode];
                 if(!$attributeLogic){
                     $attributeLogic=null;
                 }
@@ -193,12 +231,15 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
             //get inherited status and visibility -stop
 
             if ($product->getTypeId() == "simple") {
-
+                $shouldSkipProduct = $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product);
                 //do not include variant products that will not be fetched by products method
                 if (
                     $attributeLogicList['status'] != 'child'
-                    && $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product)
+                    && $shouldSkipProduct
                 ) {
+                    if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                        Mage::log('skipping ' . $product->getSku() . '- shouldSkipProduct2 = ' . var_export($shouldSkipProduct, 1) . '', null, $this->_logFileName);
+                    }
                     continue;
                 }
             }
@@ -220,11 +261,17 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
                     if($result->getValueOf('status')==$statusFilterLabel) {
                         $products[] = $result->getResult();
                     } else {
-                        //Mage::log('status '.$result->getValueOf('status').' does not match expected '.$statusFilterLabel.', skipping');
+                        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                            Mage::log('' . $product->getSku() . ' status ' . $result->getValueOf('status') . ' does not match expected ' . $statusFilterLabel . ', skipping', null, $this->_logFileName);
+                        }
                     }
                 } else {
                     //if no status filter given
                     $products[] = $result->getResult();
+                }
+            } else {
+                if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                    Mage::log('product ' . $product->getSku() . ' skipped, not in product_type filter', null, $this->_logFileName);
                 }
             }
 
@@ -232,15 +279,16 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
             Mage::unregister('datafeedwatch_connector_result');
 
         }
-
         $numberOfProducts = count($products);
-
+        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+            Mage::log('initial collection to parse has ' . $collection->count() . ' products', null, $this->_logFileName);
+        }
         /* @deprecated since this doesn't apply filters based on status
         $numberOfProducts = 0;
         if (!empty($collection)) {
-            $numberOfProducts = $collection->getSize();
+        $numberOfProducts = $collection->getSize();
         }
-        */
+         */
 
         return $numberOfProducts;
     }
@@ -252,18 +300,6 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function products($options = array(), $fetchingUpdatedProducts = false)
     {
-        /* Force return all products when the setting save flag is set */
-        $configValue = Mage::getStoreConfig('datafeedwatch/settings/last_save');
-        if ( !empty($configValue) ) {
-            $tmpStoreFilter = $options['store'];
-            $tmpPageParam = $options['page'];
-            $tmpPerPageParam = $options['per_page'];
-            unset ($options);
-            $options['store'] = $tmpStoreFilter;
-            $options['page'] = $tmpPageParam;
-            $options['per_page'] = $tmpPerPageParam;
-        }
-
         $attributeLogicList = unserialize(Mage::getStoreConfig('datafeedwatch/settings/attribute_logic'));
 
         /* Do not process type and status for magento collection, filter them at the end */
@@ -290,7 +326,12 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
 
         /* Use default limit if not set */
         if (!array_key_exists('per_page', $options)) {
-            $options['per_page'] = 100;
+            $options['per_page'] = 99999;
+        }
+
+        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+            Mage::log(__METHOD__, null, $this->_logFileName);
+            Mage::log($options, null, $this->_logFileName);
         }
 
         /* Get Product Collection */
@@ -316,9 +357,11 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
         $categoryHandler->loadCategories($this->storeRootCategoryId);
 
         $products = array();
+        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+            Mage::log('initial collection to parse has ' . $collection->count() . ' products', null, $this->_logFileName);
+        }
 
         foreach ($collection as $product) {
-
             $result = Mage::getModel('connector/product_result');
 
             //re-setters
@@ -351,11 +394,15 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
 
             /* Do not return the product if we should skip it */
             /* Do that only for parent & child_then_parent logic */
+            $shouldSkipProduct = $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product);
             if (
                 $attributeLogicList['status'] != 'child'
                 && !$fetchingUpdatedProducts
-                && $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product)
+                && $shouldSkipProduct
             ) {
+                if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                    Mage::log('' . $product->getSku() . '- shouldSkipProduct = ' . var_export($shouldSkipProduct, 1) . ' and status is NOT from child, but ' . $attributeLogicList['status'], null, $this->_logFileName);
+                }
                 continue;
             }
 
@@ -389,7 +436,7 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
                 /* Only use user-selected fields from DataFeedWatch -> Settings + required attributes */
                 if (in_array($attributeCode, $allowedAttributes)){
 
-                    $attributeLogic = isset($attributeLogicList[$attributeCode]) ? $attributeLogicList[$attributeCode] : null;
+                    $attributeLogic = $attributeLogicList[$attributeCode];
                     if(!$attributeLogic){
                         $attributeLogic=null;
                     }
@@ -509,17 +556,24 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
                     if($result->getValueOf('status')==$statusFilterLabel) {
                         $products[] = $result->getResult();
                     } else {
-                        //Mage::log('status '.$result->getValueOf('status').' does not match expected '.$statusFilterLabel.', skipping');
+                        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                            Mage::log('' . $product->getSku() . ' status ' . $result->getValueOf('status') . ' does not match expected ' . $statusFilterLabel . '', null, $this->_logFileName);
+                        }
                     }
                 } else {
                     //if no status filter given
                     $products[] = $result->getResult();
+                }
+            } else {
+                if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
+                    Mage::log('product ' . $product->getSku() . ' not in product_type filter', null, $this->_logFileName);
                 }
             }
 
             /* Get rid of our global product object from registry */
             Mage::unregister('datafeedwatch_connector_result');
         }
+
         return $products;
     }
 
@@ -552,15 +606,6 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      * @return array
      */
     public function updated_products($options){
-
-        /* Force return all products when the setting save flag is set */
-        $configValue = Mage::getStoreConfig('datafeedwatch/settings/last_save');
-        if ( !empty($configValue) ) {
-            $tmpStoreFilter = $options['store'];
-            unset ($options);
-            $options['store'] = $tmpStoreFilter;
-            return $this->products($options);
-        }
 
         /* Temporary get the type filter out of options so magento collection doesn't filter it yet */
         $finalTypeFilter = $options['type'];
@@ -596,34 +641,11 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function updated_product_count($options){
 
-        /* Force return all products when the setting save flag is set */
-        $configValue = Mage::getStoreConfig('datafeedwatch/settings/last_save');
-        if ( !empty($configValue) ) {
-            unset ($options);
-        }
-
         $dataFeedWatchHelper = Mage::helper('connector');
         /* @var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
 
         $fetchList = $dataFeedWatchHelper->getUpdatedProductList($options);
         return count($fetchList);
-    }
-
-	public function settings_changedate_nullify($options){
-
-        if(!isset($options['store'])) {
-            $options['store'] = 'default';
-        }
-
-        Mage::getModel('core/config')->saveConfig('datafeedwatch/settings/last_save', '',$options['store']);
-
-        //only clean config cache, leave the rest untouched
-        Mage::app()->getCacheInstance()->cleanType('config');
-    }
-
-    public function settings_changedate_get($options){
-        //setting is global, do not consider which store is it.
-        return Mage::getStoreConfig('datafeedwatch/settings/last_save');
     }
 
 
