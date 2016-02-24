@@ -121,43 +121,80 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function product_count($options = array())
     {
-        $collection = Mage::getResourceModel('catalog/product_collection');
-        if (isset($option['store'])) {
-            $storeCode  = $option['store'];
-            $store      = Mage::getModel('core/store')->load($storeCode);
-            if ($store->getId()) {
-                $collection->addStoreFilter($store);
-            } else {
-                Mage::log('Store does not exist' . $storeCode, null, 'datafeedwatch.log');
-            }
-        }
-        if (isset($option['type'])) {
-            $types          = $option['type'];
-            $magentoTypes   = array(
-                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
-                Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
-                Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
-                Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
-                Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
-            );
-            if (!is_array($types)) {
-                $types = array($types);
-            }
-            $types = array_map('strtolower', $types);
-            $types = array_intersect($types, $magentoTypes);
-            if (!empty($types)) {
-                $collection->addAttributeToFilter('type_id', array('in' => $types));
-            }
-        }
-        if (isset($option['status'])) {
-            if ($option['status'] == 0) {
-                $collection->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
-            } else {
-                $collection->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
-            }
-        }
+        $collection = $this->getProductCountCollection($options);
 
         return $collection->getSize();
+    }
+
+    /**
+     * @param array $options
+     * @return Mage_Catalog_Model_Resource_Product_Collection
+     */
+    protected function getProductCountCollection($options)
+    {
+        $collection = Mage::getResourceModel('catalog/product_collection');
+        if (isset($options['store'])) {
+            $this->applyStoreFilter($options['store'], $collection);
+        }
+        if (isset($options['type'])) {
+            $this->applyProductTypeFilter($options['type'], $collection);
+        }
+        if (isset($options['status'])) {
+            $this->applyProductStatusFilter($options['status'], $collection);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @param string|int $status
+     * @param Mage_Catalog_Model_Resource_Product_Collection $collection
+     */
+    protected function applyProductStatusFilter($status, &$collection)
+    {
+        $status = (string) $status;
+        if ($status === '0') {
+            $collection->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
+        } else if ($status === '1') {
+            $collection->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
+        }
+    }
+
+    /**
+     * @param string|int $storeCode
+     * @param Mage_Catalog_Model_Resource_Product_Collection $collection
+     */
+    protected function applyStoreFilter($storeCode, &$collection)
+    {
+        $store = Mage::getModel('core/store')->load($storeCode);
+        if ($store->getId()) {
+            $collection->addStoreFilter($store);
+        } else {
+            Mage::log('Store does not exist' . $storeCode, null, 'datafeedwatch.log');
+        }
+    }
+
+    /**
+     * @param string|array $types
+     * @param Mage_Catalog_Model_Resource_Product_Collection $collection
+     */
+    protected function applyProductTypeFilter($types, &$collection)
+    {
+        $magentoTypes = array(
+            Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+            Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+            Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+            Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+            Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
+        );
+        if (!is_array($types)) {
+            $types = array($types);
+        }
+        $types = array_map('strtolower', $types);
+        $types = array_intersect($types, $magentoTypes);
+        if (!empty($types)) {
+            $collection->addAttributeToFilter('type_id', array('in' => $types));
+        }
     }
 
     /**
@@ -508,11 +545,11 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function updated_product_count($options){
 
-        $dataFeedWatchHelper = Mage::helper('connector');
-        /* @var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
-
-        $fetchList = $dataFeedWatchHelper->getUpdatedProductList($options);
-        return count($fetchList);
+        $collection = $this->getProductCountCollection($options);
+        $updatedAt  = $options['updated_at'];
+        $updatedAt  = date("Y-m-d H:i:s", strtotime($updatedAt));
+        $collection->addFieldToFilter('updated_at',array('gteq' => $updatedAt));
+        return $collection->getSize();
     }
 
 
