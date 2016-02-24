@@ -121,176 +121,43 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
      */
     public function product_count($options = array())
     {
-        $finalTypeFilter = null;
-        if(isset($options['status'])) {
-            $finalTypeFilter = $options['type'];
-            unset($options['type']);
-        }
-
-        $finalStatusFilter = null;
-        if(isset($options['status'])) {
-            $finalStatusFilter = $options['status'];
-            unset($options['status']);
-        }
-
-        $products = array();
-
-        $attributeLogicList = unserialize(Mage::getStoreConfig('datafeedwatch/settings/attribute_logic'));
-
-        $dataFeedWatchHelper = Mage::helper('connector');
-
-        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-            Mage::log(__METHOD__, null, $this->_logFileName);
-            Mage::log($options, null, $this->_logFileName);
-        }
-
-        /* var $dataFeedWatchHelper DataFeedWatch_Connector_Helper_Data */
-        $collection = $dataFeedWatchHelper->prepareCollection($options)
-            ->getCollection();
-
-        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-            Mage::log('initial collection to parse has ' . $collection->count() . ' products', null, $this->_logFileName);
-        }
-
-        foreach($collection as $product){
-            $result = Mage::getModel('connector/product_result');
-            //re-setters
-            $isConfigurable = false;
-
-            //reload product to get all attributes for particular store
-            if ($dataFeedWatchHelper->storeId) {
-                $product = Mage::getModel('catalog/product')->setStoreId($dataFeedWatchHelper->storeId)->load($product->getId());
+        $collection = Mage::getResourceModel('catalog/product_collection');
+        if (isset($option['store'])) {
+            $storeCode  = $option['store'];
+            $store      = Mage::getModel('core/store')->load($storeCode);
+            if ($store->getId()) {
+                $collection->addStoreFilter($store);
             } else {
-                $product = Mage::getModel('catalog/product')->load($product->getId());
+                Mage::log('Store does not exist' . $storeCode, null, 'datafeedwatch.log');
             }
-
-            /* @var $product Mage_Catalog_Model_Product */
-            $result->setProduct($product);
-
-            $result
-                ->setValueOf('product_id',$product->getId())
-                ->setValueOf('sku',$product->getSku())
-                ->setValueOf('product_type',$product->getTypeId());
-
-            $parent_product = $dataFeedWatchHelper->getParentProductFromChild($product);
-            /* @var $parent_product Mage_Catalog_Model_Product */
-
-            if($parent_product) {
-                $result->setParentProduct($parent_product);
-                $configurableParentIds = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
-                if(in_array($parent_product->getId(),$configurableParentIds)){
-                    $isConfigurable = true;
-                }
+        }
+        if (isset($option['type'])) {
+            $types          = $option['type'];
+            $magentoTypes   = array(
+                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+                Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+                Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+                Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
+            );
+            if (!is_array($types)) {
+                $types = array($types);
             }
-
-            /* Do not return the product if we should skip it */
-            /* Do that only for parent & child_then_parent logic */
-            $fetchingUpdatedProducts = false; //always false in this method
-            $shouldSkipProduct = $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product);
-            if (
-                $attributeLogicList['status'] != 'child'
-                && !$fetchingUpdatedProducts
-                && $shouldSkipProduct
-            ) {
-                if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-                    Mage::log('' . $product->getSku() . ' - shouldSkipProduct = ' . var_export($shouldSkipProduct, 1) . ' and status is NOT from child, but ' . $attributeLogicList['status'], null, $this->_logFileName);
-                }
-                continue;
+            $types = array_map('strtolower', $types);
+            $types = array_intersect($types, $magentoTypes);
+            if (!empty($types)) {
+                $collection->addAttributeToFilter('type_id', array('in' => $types));
             }
-
-
-            //get inherited status and visibility -start
-            /* @TODO: This code is partially used in products method. Refactor this for re-usable method */
-            foreach(array('status','visibility') as $attributeCode) {
-
-                $attributeLogic = $attributeLogicList[$attributeCode];
-                if(!$attributeLogic){
-                    $attributeLogic=null;
-                }
-
-                $value = $result->getAttributeByLogic($attributeCode, $attributeLogic);
-                $targetProduct = $result->getAttributeProductByLogic($attributeCode, $attributeLogic);
-
-                /* Check if there's no mapped value for that value */
-                /* AND it is number */
-                /* BUT not a price or is_in_stock or product_id or tax_class_id */
-                if (is_numeric($value)
-                    && !stristr($attributeCode,'price')
-                    && !in_array($attributeCode,array('is_in_stock','product_id','tax_class_id'))
-                ) {
-                    //Mage::log('foreacing - '.$attributeCode);
-                    $value = $targetProduct->getResource()->getAttribute($attributeCode)->getFrontend()->getValue($targetProduct);
-
-                    /* Trim for better display */
-                    if (is_string($value)) {
-                        $value = trim($value);
-                    }
-                }
-                $result->setValueOf($attributeCode, $value);
-            }
-            //get inherited status and visibility -stop
-
-            if ($product->getTypeId() == "simple") {
-                $shouldSkipProduct = $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product);
-                //do not include variant products that will not be fetched by products method
-                if (
-                    $attributeLogicList['status'] != 'child'
-                    && $shouldSkipProduct
-                ) {
-                    if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-                        Mage::log('skipping ' . $product->getSku() . '- shouldSkipProduct2 = ' . var_export($shouldSkipProduct, 1) . '', null, $this->_logFileName);
-                    }
-                    continue;
-                }
-            }
-
-            /* if product matches finaltype filter */
-            if(
-                is_array($finalTypeFilter) && in_array($result->getValueOf('product_type'),$finalTypeFilter)
-                || !is_array($finalTypeFilter)
-            ){
-
-                //AND if product matches final status filter
-                if($finalStatusFilter === 0 || $finalStatusFilter === 1
-                    || $finalStatusFilter ==='0' || $finalStatusFilter === '1' ) {
-                    $statusLabels =  Mage_Catalog_Model_Product_Status::getOptionArray();
-                    $statusLabels[0] =$statusLabels[2];
-                    $statusLabels[1] =$statusLabels[1];
-                    $statusFilterLabel = $statusLabels[$finalStatusFilter];
-                    //Mage::log('id:'.$result->getValueOf('product_id').'  label:'.$statusFilterLabel.' status:'.$result->getValueOf('status').' ');
-                    if($result->getValueOf('status')==$statusFilterLabel) {
-                        $products[] = $result->getResult();
-                    } else {
-                        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-                            Mage::log('' . $product->getSku() . ' status ' . $result->getValueOf('status') . ' does not match expected ' . $statusFilterLabel . ', skipping', null, $this->_logFileName);
-                        }
-                    }
-                } else {
-                    //if no status filter given
-                    $products[] = $result->getResult();
-                }
+        }
+        if (isset($option['status'])) {
+            if ($option['status'] == 0) {
+                $collection->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
             } else {
-                if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-                    Mage::log('product ' . $product->getSku() . ' skipped, not in product_type filter', null, $this->_logFileName);
-                }
+                $collection->addAttributeToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
             }
-
-            /* Get rid of our global product object from registry */
-            Mage::unregister('datafeedwatch_connector_result');
-
         }
-        $numberOfProducts = count($products);
-        if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
-            Mage::log('initial collection to parse has ' . $collection->count() . ' products', null, $this->_logFileName);
-        }
-        /* @deprecated since this doesn't apply filters based on status
-        $numberOfProducts = 0;
-        if (!empty($collection)) {
-        $numberOfProducts = $collection->getSize();
-        }
-         */
 
-        return $numberOfProducts;
+        return $collection->getSize();
     }
 
     /**
