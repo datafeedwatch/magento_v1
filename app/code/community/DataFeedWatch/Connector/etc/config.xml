@@ -2,7 +2,7 @@
 <config>
     <modules>
         <DataFeedWatch_Connector>
-            <version>0.2.18.14</version>
+            <version>0.2.18.15</version>
         </DataFeedWatch_Connector>
     </modules>
     <admin>
