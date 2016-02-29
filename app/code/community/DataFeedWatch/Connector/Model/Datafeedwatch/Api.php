@@ -139,9 +139,9 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
         if (isset($options['type'])) {
             $this->applyProductTypeFilter($options['type'], $collection);
         }
-        if (isset($options['status'])) {
-            $this->applyProductStatusFilter($options['status'], $collection);
-        }
+//        if (isset($options['status'])) {
+//            $this->applyProductStatusFilter($options['status'], $collection);
+//        }
 
         return $collection;
     }
@@ -433,6 +433,7 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
             /* product_url */
             $productUrlHandler = Mage::helper('connector/dynamic_product_url');
             $productUrl = $productUrlHandler->setResult($result)->getAttributeByLogic('product_url','child');
+            $productUrl = !empty($parentProductUrl) ? $parentProductUrl : $productUrl;
             $result->setValueOf('product_url',$productUrl);
 
             /* product_url_rewritten */
