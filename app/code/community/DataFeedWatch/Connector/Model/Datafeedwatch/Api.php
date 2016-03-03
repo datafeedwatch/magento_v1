@@ -91,7 +91,17 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
                         }
 
                         //do not include variant products that will not be fetched by products method
-                        if ($dataFeedWatchHelper->shouldSkipProduct($product,$parent_product)) {
+                        $shouldSkipType = false;
+                        if (isset($options['type'])) {
+                            $parentTypes = array(
+                                'bundle',
+                                'configurable',
+                                'grouped',
+                            );
+                            $parentTypesInFinalTypeFilter = array_intersect($parentTypes, $options['type']);
+                            $shouldSkipType = !empty($parentTypesInFinalTypeFilter);
+                        }
+                        if ($dataFeedWatchHelper->shouldSkipProduct($product,$parent_product) && $shouldSkipType) {
                             continue;
                         }
                     }
@@ -209,7 +219,7 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
         /* Do not process type and status for magento collection, filter them at the end */
 
         $finalTypeFilter = null;
-        if(isset($options['status'])) {
+        if(isset($options['type'])) {
             $finalTypeFilter = $options['type'];
             unset($options['type']);
         }
@@ -299,10 +309,19 @@ class DataFeedWatch_Connector_Model_Datafeedwatch_Api extends Mage_Catalog_Model
             /* Do not return the product if we should skip it */
             /* Do that only for parent & child_then_parent logic */
             $shouldSkipProduct = $dataFeedWatchHelper->shouldSkipProduct($product, $parent_product);
+
+            $parentTypes = array(
+                'bundle',
+                'configurable',
+                'grouped',
+            );
+            $parentTypesInFinalTypeFilter = array_intersect($parentTypes, $finalTypeFilter);
+
             if (
                 $attributeLogicList['status'] != 'child'
                 && !$fetchingUpdatedProducts
                 && $shouldSkipProduct
+                && !empty($parentTypesInFinalTypeFilter)
             ) {
                 if(Mage::getStoreConfig('datafeedwatch/settings/debug')) {
                     Mage::log('' . $product->getSku() . '- shouldSkipProduct = ' . var_export($shouldSkipProduct, 1) . ' and status is NOT from child, but ' . $attributeLogicList['status'], null, $this->_logFileName);
