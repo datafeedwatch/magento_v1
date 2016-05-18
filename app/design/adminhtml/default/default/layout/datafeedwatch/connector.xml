@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<layout>
+    <adminhtml_system_config_edit>
+        <reference name="head">
+            <action method="addItem"><type>skin_js</type><name>datafeedwatch/connector/js/grid/inheritance.js</name></action>
+            <action method="addItem"><type>skin_css</type><name>datafeedwatch/connector/css/grid/inheritance.css</name></action>
+        </reference>
+            <block type="datafeedwatch_connector/adminhtml_system_config_grid" name="datafeedwatch_connector_inheritance_grid"
+                   as="datafeedwatch_connector_inheritance_grid" template="datafeedwatch/connector/grid.phtml">
+            </block>
+    </adminhtml_system_config_edit>
+    <adminhtml_datafeedwatch_renderinheritancegrid>
+        <block type="datafeedwatch_connector/adminhtml_system_config_grid_items" name="datafeedwatch_connector_inheritance_grid_items"
+               as="datafeedwatch_connector_inheritance_grid_items" template="datafeedwatch/connector/grid/items.phtml">
+        <block type="datafeedwatch_connector/adminhtml_system_config_grid_items_row" name="datafeedwatch_connector_inheritance_grid_items_row"
+               as="datafeedwatch_connector_inheritance_grid_items_row" template="datafeedwatch/connector/grid/items/row.phtml" />
+
+            <block type="datafeedwatch_connector/adminhtml_system_config_grid_pager" name="datafeedwatch_connector_inheritance_grid_pager"
+                   as="datafeedwatch_connector_inheritance_grid_pager" template="datafeedwatch/connector/grid/pager.phtml" />
+        </block>
+    </adminhtml_datafeedwatch_renderinheritancegrid>
+</layout>

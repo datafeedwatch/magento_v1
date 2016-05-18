@@ -1,0 +1,57 @@
+<?php
+/** @var DataFeedWatch_Connector_Model_System_Config_Source_Inheritance $inheritanceModel */
+/** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+/** @var DataFeedWatch_Connector_Block_Adminhtml_System_Config_Grid_Items_Row $this */
+/** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+
+$attribute          = $this->getAttributeItem();
+$inheritanceModel   = Mage::getModel('datafeedwatch_connector/system_config_source_inheritance');
+$inheritance        = (int)$attribute->getDfwInheritance();
+$import             = (int)$attribute->getImportToDfw();
+$inheritanceStatus  = $attribute->getCanConfigureInheritance() === '0' ? ' disabled ' : '';
+?>
+<div class="attribute_item">
+    <div class="attribute_name">
+        <a href="<?php echo $this->getAttributeLink() ?>" target="_blank">
+            <?php echo $this->getAttributeLabel() ?>
+        </a>
+    </div>
+    <div class="attribute_import">
+        <select name="import_<?php echo $attribute->getId() ?>"
+            <?php echo $attribute->getCanConfigureImport() === '0' ? ' disabled ' : '' ?>
+                onchange="saveImport(<?php echo $attribute->getId() ?>, this.value)" >
+            <option value="1" <?php echo $import === 1 ? 'selected' : '' ?>>
+                <?php echo $this->helper('adminhtml')->__('Yes') ?>
+            </option>
+            <option value="0" <?php echo $import === 0 ? 'selected' : '' ?>>
+                <?php echo $this->helper('adminhtml')->__('No') ?>
+            </option>
+        </select>
+    </div>
+    <div class="attribute_inheritance">
+        <div class="inheritance_child">
+            <input type="radio" name="inheritance_<?php echo $attribute->getId() ?>"
+                <?php echo $inheritanceStatus ?>
+                <?php echo $inheritanceModel::CHILD_OPTION_ID === $inheritance ? ' checked ' : '' ?>
+                   value="<?php echo $inheritanceModel::CHILD_OPTION_ID ?>"
+                   onchange="saveInheritance(<?php echo $attribute->getId() ?>, this.value)
+                       "/>
+        </div>
+        <div class="inheritance_parent">
+            <input type="radio" name="inheritance_<?php echo $attribute->getId() ?>"
+                <?php echo $inheritanceStatus ?>
+                <?php echo $inheritanceModel::PARENT_OPTION_ID === $inheritance ? ' checked ' : '' ?>
+                   value="<?php echo $inheritanceModel::PARENT_OPTION_ID ?>"
+                   onchange="saveInheritance(<?php echo $attribute->getId() ?>, this.value)
+                       "/>
+        </div>
+        <div class="inheritance_child_then_parent">
+            <input type="radio" name="inheritance_<?php echo $attribute->getId() ?>"
+                <?php echo $inheritanceStatus ?>
+                <?php echo $inheritanceModel::CHILD_THEN_PARENT_OPTION_ID === $inheritance ? ' checked ' : '' ?>
+                   value="<?php echo $inheritanceModel::CHILD_THEN_PARENT_OPTION_ID ?>"
+                   onchange="saveInheritance(<?php echo $attribute->getId() ?>, this.value)
+                       "/>
+        </div>
+    </div>
+</div>

@@ -1,82 +1,39 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
         <DataFeedWatch_Connector>
-            <version>0.2.18.13</version>
+            <version>0.3.0</version>
         </DataFeedWatch_Connector>
     </modules>
-    <admin>
-        <routers>
-            <adminhtml>
-                <args>
-                    <modules>
-                        <connector after="Mage_Adminhtml">DataFeedWatch_Connector_Adminhtml</connector>
-                    </modules>
-                </args>
-            </adminhtml>
-        </routers>
-    </admin>
-    <adminhtml>
-        <menu>
-            <catalog translate="title" module="adminhtml">
-                <children>
-                    <connector translate="title" module="connector">
-                        <title>DataFeedWatch</title>
-                        <action>adminhtml/connectorsettings</action>
-                    </connector>
-                </children>
-            </catalog>
-        </menu>
-        <acl>
-            <resources>
-                <admin>
-                    <catalog>
-                        <children>
-                            <connector translate="title" module="connector">
-                                <title>DataFeedWatch</title>
-                            </connector>
-                        </children>
-                    </catalog>
-                </admin>
-            </resources>
-        </acl>
-        <layout>
-            <updates>
-                <connector>
-                    <file>connector.xml</file>
-                </connector>
-            </updates>
-        </layout>
-    </adminhtml>
+
     <global>
-        <models>
-            <connector>
-                <class>DataFeedWatch_Connector_Model</class>
-                <resourceModel>connector_resource</resourceModel>
-            </connector>
-            <connector_resource>
-                <class>DataFeedWatch_Connector_Model_Resource</class>
-                <deprecatedNode>connector_mysql4</deprecatedNode>
-                <entities>
-                    <catalogrule_info>
-                        <table>datafeedwatch_catalogrule_info</table>
-                    </catalogrule_info>
-                    <salesrule_info>
-                        <table>datafeedwatch_salesrule_info</table>
-                    </salesrule_info>
-                </entities>
-            </connector_resource>
-        </models>
         <helpers>
-            <connector>
+            <datafeedwatch_connector>
                 <class>DataFeedWatch_Connector_Helper</class>
-            </connector>
+            </datafeedwatch_connector>
         </helpers>
         <blocks>
-            <connector>
+            <datafeedwatch_connector>
                 <class>DataFeedWatch_Connector_Block</class>
-            </connector>
+            </datafeedwatch_connector>
         </blocks>
+        <models>
+            <datafeedwatch_connector>
+                <class>DataFeedWatch_Connector_Model</class>
+                <resourceModel>datafeedwatch_connector_resource</resourceModel>
+            </datafeedwatch_connector>
+            <datafeedwatch_connector_resource>
+                <class>DataFeedWatch_Connector_Model_Resource</class>
+                <entities>
+                    <catalog_attribute_info>
+                        <table>datafeedwatch_catalog_attribute_info</table>
+                    </catalog_attribute_info>
+                    <updated_products>
+                        <table>datafeedwatch_updated_products</table>
+                    </updated_products>
+                </entities>
+            </datafeedwatch_connector_resource>
+        </models>
         <resources>
             <datafeedwatch_connector_setup>
                 <setup>
@@ -85,33 +42,152 @@
             </datafeedwatch_connector_setup>
         </resources>
         <events>
-            <catalogrule_rule_save_after>
+            <catalog_entity_attribute_save_before>
                 <observers>
-                    <datafeedwatch_connector_save_catalogrule_date>
-                        <type>singleton</type>
-                        <class>DataFeedWatch_Connector_Model_Observer</class>
-                        <method>catalogruleRuleSaveAfter</method>
-                    </datafeedwatch_connector_save_catalogrule_date>
+                    <datafeedwatch_connector_attribute_save_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>saveInheritanceInAttribute</method>
+                    </datafeedwatch_connector_attribute_save_before>
                 </observers>
-            </catalogrule_rule_save_after>
-            <salesrule_rule_save_after>
+            </catalog_entity_attribute_save_before>
+            <catalog_entity_attribute_delete_before>
                 <observers>
-                    <datafeedwatch_connector_save_salesrule_date>
-                        <type>singleton</type>
-                        <class>DataFeedWatch_Connector_Model_Observer</class>
-                        <method>salesruleRuleSaveAfter</method>
-                    </datafeedwatch_connector_save_salesrule_date>
+                    <datafeedwatch_connector_attribute_delete_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>deleteAttribute</method>
+                    </datafeedwatch_connector_attribute_delete_before>
                 </observers>
-            </salesrule_rule_save_after>
-            <controller_action_postdispatch_adminhtml_promo_catalog_applyRules>
+            </catalog_entity_attribute_delete_before>
+            <catalog_category_save_after>
                 <observers>
-                    <datafeedwatch_connector_applyAll_catalogrule_date>
-                        <type>singleton</type>
-                        <class>DataFeedWatch_Connector_Model_Observer</class>
-                        <method>catalogruleRuleApplyAllAfter</method>
-                    </datafeedwatch_connector_applyAll_catalogrule_date>
+                    <datafeedwatch_connector_catalog_category_save_after>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>updateLastInheritanceUpdateDateOnCategoryChangeName</method>
+                    </datafeedwatch_connector_catalog_category_save_after>
                 </observers>
-            </controller_action_postdispatch_adminhtml_promo_catalog_applyRules>
+            </catalog_category_save_after>
+            <catalog_category_delete_before>
+                <observers>
+                    <datafeedwatch_connector_catalog_category_delete_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>updateLastInheritanceUpdateDate</method>
+                    </datafeedwatch_connector_catalog_category_delete_before>
+                </observers>
+            </catalog_category_delete_before>
+            <catalog_category_change_products>
+                <observers>
+                    <datafeedwatch_connector_catalog_category_change_products>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>updateLastInheritanceUpdateDate</method>
+                    </datafeedwatch_connector_catalog_category_change_products>
+                </observers>
+            </catalog_category_change_products>
+            <catalog_category_tree_move_after>
+                <observers>
+                    <datafeedwatch_connector_catalog_category_tree_move_after>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>updateLastInheritanceUpdateDate</method>
+                    </datafeedwatch_connector_catalog_category_tree_move_after>
+                </observers>
+            </catalog_category_tree_move_after>
+            <catalog_entity_attribute_load_after>
+                <observers>
+                    <datafeedwatch_connector_attribute_load_after>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>getInheritanceForAttribute</method>
+                    </datafeedwatch_connector_attribute_load_after>
+                </observers>
+            </catalog_entity_attribute_load_after>
+            <core_collection_abstract_load_before>
+                <observers>
+                    <datafeedwatch_connector_attribute_collection_load_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>getInheritanceForAttributeCollection</method>
+                    </datafeedwatch_connector_attribute_collection_load_before>
+                </observers>
+            </core_collection_abstract_load_before>
+            <catalog_product_delete_before>
+                <observers>
+                    <datafeedwatch_connector_product_delete_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>removeProductFromUpdatedTable</method>
+                    </datafeedwatch_connector_product_delete_before>
+                </observers>
+            </catalog_product_delete_before>
         </events>
     </global>
+
+    <adminhtml>
+        <events>
+            <adminhtml_catalog_product_attribute_edit_prepare_form>
+                <observers>
+                    <connector_add_inheritance_field_to_attribute_form>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>addInheritanceFieldToAttributeForm</method>
+                    </connector_add_inheritance_field_to_attribute_form>
+                </observers>
+            </adminhtml_catalog_product_attribute_edit_prepare_form>
+            <model_config_data_save_before>
+                <observers>
+                    <dfw_connector_update_inheritance_date_after_config_save>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>updateInheritanceUpdateDate</method>
+                    </dfw_connector_update_inheritance_date_after_config_save>
+                </observers>
+            </model_config_data_save_before>
+        </events>
+        <translate>
+            <modules>
+                <DataFeedWatch_Connector>
+                    <files>
+                        <default>DataFeedWatch_Connector.csv</default>
+                    </files>
+                </DataFeedWatch_Connector>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <datafeedwatch_connector>
+                    <file>datafeedwatch/connector.xml</file>
+                </datafeedwatch_connector>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <datafeedwatch_connector before="Mage_Adminhtml">DataFeedWatch_Connector_Adminhtml</datafeedwatch_connector>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <crontab>
+        <jobs>
+            <datafeedwatch_connector_fill_updated_at_table>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>datafeedwatch_connector/cron::reindex</model>
+                </run>
+            </datafeedwatch_connector_fill_updated_at_table>
+        </jobs>
+    </crontab>
+
+    <default>
+        <datafeedwatch_connector>
+            <general>
+                <debug>0</debug>
+            </general>
+            <custom_inheritance>
+                <product_url>1</product_url>
+                <image_url>0</image_url>
+            </custom_inheritance>
+        </datafeedwatch_connector>
+    </default>
 </config>

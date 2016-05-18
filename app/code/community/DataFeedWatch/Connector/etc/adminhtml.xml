@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <menu>
+        <system>
+            <children>
+                <connector translate="title" module="datafeedwatch_connector">
+                    <title>DataFeedWatch</title>
+                    <action>adminhtml/system_config/edit/section/datafeedwatch_connector</action>
+                </connector>
+            </children>
+        </system>
+    </menu>
+
+    <acl>
+        <resources>
+            <admin>
+                <system>
+                    <children>
+                        <connector translate="title" module="datafeedwatch_connector">
+                            <title>DataFeedWatch</title>
+                        </connector>
+                    </children>
+                </system>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <datafeedwatch_connector>
+                                        <title>DataFeedWatch Connector</title>
+                                    </datafeedwatch_connector>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
