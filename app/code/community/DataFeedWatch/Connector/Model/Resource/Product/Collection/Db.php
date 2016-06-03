@@ -23,6 +23,8 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
     protected $optionsFilters;
     /** @var  string $ruleDateSelect */
     protected $ruleDateSelect;
+    /** @var bool $canGroup */
+    protected $canGroup = true;
 
     /**
      * @param string $tableAlias
@@ -147,6 +149,10 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
             sprintf('%s.parent_id = %s.entity_id', self::PRODUCT_RELATIONS_TABLE_ALIAS, self::PARENT_UPDATED_AT_TABLE_ALIAS),
             array('parent_updated_at' => sprintf('%s.updated_at', self::PARENT_UPDATED_AT_TABLE_ALIAS))
         );
+
+        if ($this->canGroup) {
+            $this->getSelect()->group('e.entity_id');
+        }
 
         return $this;
     }

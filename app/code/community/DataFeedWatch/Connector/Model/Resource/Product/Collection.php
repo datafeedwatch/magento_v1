@@ -38,6 +38,9 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection
     {
         $this->helper()->log($options);
         $this->optionsFilters = $options;
+        if (isset($options['group'])) {
+            $this->canGroup = $options['group'];
+        }
         $this->applyStoreFilter();
         $this->registryHelper()->initImportRegistry($this->getStoreId());
         $this->addRuleDate();

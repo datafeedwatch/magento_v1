@@ -101,11 +101,12 @@ class DataFeedWatch_Connector_Model_Product
      */
     protected function fillAllAttributesData()
     {
+        $productAttributes = array_keys($this->getAttributes());
         $attributeCollection = Mage::registry(DataFeedWatch_Connector_Helper_Registry::ALL_IMPORTABLE_ATTRIBUTES_KEY);
         foreach ($attributeCollection as $attribute) {
             $attributeCode = $attribute->getAttributeCode();
             $data = $this->getData($attributeCode);
-            if (empty($attributeCode) || !$this->hasData($attributeCode) || empty($data)) {
+            if (empty($attributeCode) || !in_array($attributeCode, $productAttributes)) {
                 continue;
             }
             $value = $attribute->getFrontend()->getValue($this);
