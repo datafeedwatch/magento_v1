@@ -2,7 +2,7 @@
 <config>
     <modules>
         <DataFeedWatch_Connector>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </DataFeedWatch_Connector>
     </modules>
 
@@ -25,9 +25,6 @@
             <datafeedwatch_connector_resource>
                 <class>DataFeedWatch_Connector_Model_Resource</class>
                 <entities>
-                    <catalog_attribute_info>
-                        <table>datafeedwatch_catalog_attribute_info</table>
-                    </catalog_attribute_info>
                     <updated_products>
                         <table>datafeedwatch_updated_products</table>
                     </updated_products>
@@ -42,22 +39,6 @@
             </datafeedwatch_connector_setup>
         </resources>
         <events>
-            <catalog_entity_attribute_save_before>
-                <observers>
-                    <datafeedwatch_connector_attribute_save_before>
-                        <class>datafeedwatch_connector/observer</class>
-                        <method>saveInheritanceInAttribute</method>
-                    </datafeedwatch_connector_attribute_save_before>
-                </observers>
-            </catalog_entity_attribute_save_before>
-            <catalog_entity_attribute_delete_before>
-                <observers>
-                    <datafeedwatch_connector_attribute_delete_before>
-                        <class>datafeedwatch_connector/observer</class>
-                        <method>deleteAttribute</method>
-                    </datafeedwatch_connector_attribute_delete_before>
-                </observers>
-            </catalog_entity_attribute_delete_before>
             <catalog_category_save_after>
                 <observers>
                     <datafeedwatch_connector_catalog_category_save_after>
@@ -90,22 +71,6 @@
                     </datafeedwatch_connector_catalog_category_tree_move_after>
                 </observers>
             </catalog_category_tree_move_after>
-            <catalog_entity_attribute_load_after>
-                <observers>
-                    <datafeedwatch_connector_attribute_load_after>
-                        <class>datafeedwatch_connector/observer</class>
-                        <method>getInheritanceForAttribute</method>
-                    </datafeedwatch_connector_attribute_load_after>
-                </observers>
-            </catalog_entity_attribute_load_after>
-            <core_collection_abstract_load_before>
-                <observers>
-                    <datafeedwatch_connector_attribute_collection_load_before>
-                        <class>datafeedwatch_connector/observer</class>
-                        <method>getInheritanceForAttributeCollection</method>
-                    </datafeedwatch_connector_attribute_collection_load_before>
-                </observers>
-            </core_collection_abstract_load_before>
             <catalog_product_delete_before>
                 <observers>
                     <datafeedwatch_connector_product_delete_before>

@@ -51,7 +51,7 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
         $select     = new Zend_Db_Select($this->getEntity()->getReadConnection());
         $select->from(
             array(
-            self::UPDATED_AT_TABLE_ALIAS => $this->getTable('datafeedwatch_connector/updated_products'),
+                self::UPDATED_AT_TABLE_ALIAS => $this->getTable('datafeedwatch_connector/updated_products'),
             ),
             array(
                 sprintf('COALESCE(%1$s.updated_at, 0)', self::UPDATED_AT_TABLE_ALIAS),
@@ -104,7 +104,7 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
     protected function getStatusTable()
     {
         return Mage::registry(DataFeedWatch_Connector_Helper_Registry::DFW_STATUS_ATTRIBUTE_KEY)
-            ->getBackend()->getTable();
+                   ->getBackend()->getTable();
     }
     
     /**
@@ -114,7 +114,7 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
     protected function getVisibilityTable()
     {
         return Mage::registry(DataFeedWatch_Connector_Helper_Registry::DFW_STATUS_ATTRIBUTE_KEY)
-            ->getBackend()->getTable();
+                   ->getBackend()->getTable();
     }
     
     /**
@@ -139,8 +139,7 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
         $this->getSelect()->joinLeft(
             array(self::PRODUCT_RELATIONS_TABLE_ALIAS => $this->getTable('catalog/product_relation')),
             sprintf('%s.child_id = %s.entity_id', self::PRODUCT_RELATIONS_TABLE_ALIAS, self::MAIN_TABLE_ALIAS),
-            array('parent_id' => sprintf('%s.parent_id', self::PRODUCT_RELATIONS_TABLE_ALIAS))
-        )->group(sprintf('%s.entity_id', self::MAIN_TABLE_ALIAS));
+            array('parent_id' => sprintf('%s.parent_id', self::PRODUCT_RELATIONS_TABLE_ALIAS)));
 
 
         $this->getSelect()->joinLeft(

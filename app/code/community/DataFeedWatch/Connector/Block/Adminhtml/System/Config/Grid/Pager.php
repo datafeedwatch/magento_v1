@@ -14,12 +14,8 @@ class DataFeedWatch_Connector_Block_Adminhtml_System_Config_Grid_Pager
             ->addVisibleFilter()
             ->setPageSize($this->limit)
             ->setCurPage($this->page);
-        $attributeCollection->getSelect()->joinLeft(
-            array('cai' => Mage::getModel('core/resource')
-                                                  ->getTableName('datafeedwatch_connector/catalog_attribute_info')),
-            'cai.catalog_attribute_id = main_table.attribute_id'
-        )
-        ->where('cai.can_configure_inheritance != 0 and cai.import_to_dfw != 0 or cai.can_configure_inheritance = 1');
+        $attributeCollection->getSelect()
+            ->where('additional_table.can_configure_inheritance != 0 and additional_table.import_to_dfw != 0 or additional_table.can_configure_inheritance = 1');
         $attributeCollection->setOrder('frontend_label', 'asc');
         
         return $attributeCollection;

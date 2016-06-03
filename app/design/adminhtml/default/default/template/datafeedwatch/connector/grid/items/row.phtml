@@ -6,7 +6,7 @@
 
 $attribute          = $this->getAttributeItem();
 $inheritanceModel   = Mage::getModel('datafeedwatch_connector/system_config_source_inheritance');
-$inheritance        = (int)$attribute->getDfwInheritance();
+$inheritance        = (int)$attribute->getInheritance();
 $import             = (int)$attribute->getImportToDfw();
 $inheritanceStatus  = $attribute->getCanConfigureInheritance() === '0' ? ' disabled ' : '';
 ?>

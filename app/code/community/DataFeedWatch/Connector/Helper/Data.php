@@ -205,7 +205,12 @@ class DataFeedWatch_Connector_Helper_Data
             'ignore_datafeedwatch'  => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID,
         );
 
-        Mage::getResourceModel('datafeedwatch_connector/catalog_attribute_info_collection')->walk('delete');
+        $catalogAttributes = Mage::getResourceModel('catalog/product_attribute_collection');
+        $catalogAttributes->setDataToAll('can_configure_inheritance', null);
+        $catalogAttributes->setDataToAll('inheritance', null);
+        $catalogAttributes->setDataToAll('can_configure_import', null);
+        $catalogAttributes->setDataToAll('import_to_dfw', null);
+        $catalogAttributes->save();
 
         $attributes = Mage::getResourceModel('catalog/product_attribute_collection')->addVisibleFilter();
         foreach ($attributes as $attribute) {
@@ -214,9 +219,7 @@ class DataFeedWatch_Connector_Helper_Data
             if (array_key_exists($attributeCode, $inheritanceData)) {
                 $inheritance = $inheritanceData[$attributeCode];
             }
-            Mage::getModel('datafeedwatch_connector/catalog_attribute_info')
-                ->setCatalogAttributeId($attribute->getId())
-                ->setImportToDfw(in_array($attributeCode, $enableImport))
+            $attribute->setImportToDfw(in_array($attributeCode, $enableImport))
                 ->setCanConfigureImport(!in_array($attributeCode, $cannotConfigureImportField))
                 ->setCanConfigureInheritance(!in_array($attributeCode, $cannotConfigureInheritanceField))
                 ->setInheritance($inheritance)

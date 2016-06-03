@@ -30,9 +30,7 @@ $installer->addAttribute(Mage_Catalog_Model_Product::ENTITY, 'ignore_datafeedwat
 ));
 $attribute = Mage::getModel('eav/entity_attribute')->loadByCode(Mage_Catalog_Model_Product::ENTITY, 'ignore_datafeedwatch');
 
-Mage::getModel('datafeedwatch_connector/catalog_attribute_info')
-    ->setCatalogAttributeId($attribute->getId())
-    ->setImportToDfw(0)
+$attribute->setImportToDfw(0)
     ->setCanConfigureImport(0)
     ->setCanConfigureInheritance(0)
     ->setInheritance(DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID)

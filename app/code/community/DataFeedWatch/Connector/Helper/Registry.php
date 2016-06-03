@@ -135,7 +135,7 @@ class DataFeedWatch_Connector_Helper_Registry
      */
     public function isAttributeInheritable($attribute)
     {
-        return in_array($attribute->getDfwInheritance(),
+        return in_array($attribute->getInheritance(),
             array(
                 (string) DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::PARENT_OPTION_ID,
                 (string) DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_THEN_PARENT_OPTION_ID,

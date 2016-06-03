@@ -95,8 +95,9 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
         $attributeId    = $this->getRequest()->getParam('attribute_id');
         $value          = $this->getRequest()->getParam('value');
 
-        $attribute = Mage::getModel('datafeedwatch_connector/catalog_attribute_info')
-            ->loadByAttributeId($attributeId);
+        /* @var $attribute Mage_Catalog_Model_Entity_Attribute */
+        $attribute = Mage::getModel('catalog/resource_eav_attribute')->load($attributeId);
+        /* @var $helper Mage_Catalog_Helper_Product */
         $attribute->setInheritance($value)->save();
     }
 
@@ -105,8 +106,8 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
         $attributeId    = $this->getRequest()->getParam('attribute_id');
         $value          = $this->getRequest()->getParam('value');
 
-        $attribute = Mage::getModel('datafeedwatch_connector/catalog_attribute_info')
-            ->loadByAttributeId($attributeId);
+        /* @var $attribute Mage_Catalog_Model_Entity_Attribute */
+        $attribute = Mage::getModel('catalog/resource_eav_attribute')->load($attributeId);
         $attribute->setImportToDfw($value)->save();
 
     }
