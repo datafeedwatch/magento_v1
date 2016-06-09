@@ -40,7 +40,7 @@ class DataFeedWatch_Connector_Model_Cron
         $updatedDataTable = $this->getTable('datafeedwatch_connector/updated_products');
         foreach ($priceData as $data) {
             $insertedData = array(
-                'product_id'    => $data['product_id'],
+                'dfw_prod_id'   => $data['product_id'],
                 'updated_at'    => $date,
             );
             $writeConnection->insertOnDuplicate($updatedDataTable, $insertedData, array('updated_at'));

@@ -74,7 +74,6 @@ class DataFeedWatch_Connector_Model_Api
         $this->helper()->log('datafeedwatch.product_count');
         $this->unsetUpdatedOptions($options);
         $this->filterOptions($options);
-        $options['group'] = false;
         $collection = $this->getProductCollection($options);
         $amount     = (int) $collection->getSize();
         $this->helper()->log(sprintf('datafeedwatch.product_count %d', $amount));
@@ -110,7 +109,6 @@ class DataFeedWatch_Connector_Model_Api
     {
         $this->helper()->log('datafeedwatch.updated_product_count');
         $this->filterOptions($options);
-        $options['group'] = false;
         if (!$this->isFromDateEarlierThanConfigDate($options)) {
             $collection = $this->getProductCollection($options);
             $amount     = (int) $collection->getSize();

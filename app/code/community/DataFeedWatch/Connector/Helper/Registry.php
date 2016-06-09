@@ -10,6 +10,7 @@ class DataFeedWatch_Connector_Helper_Registry
     const DFW_STATUS_ATTRIBUTE_KEY      = 'dfw_status_attribute';
     const DFW_UPDATED_AT_ATTRIBUTE_KEY  = 'dfw_updated_at_attribute';
     const DFW_VISIBILITY_ATTRIBUTE_KEY  = 'dfw_visibility_at_attribute';
+    const DFW_PARENT_ID_ATTRIBUTE_KEY   = 'dfw_parent_id_attribute';
 
     /**
      * @param string $storeId
@@ -20,6 +21,7 @@ class DataFeedWatch_Connector_Helper_Registry
         $this->registerStatusAttribute();
         $this->registerUpdatedAtAttribute();
         $this->registerVisibilityAttribute();
+        $this->registerParentIdAttribute();
         $this->registerSuperAttributes();
         $this->registerInheritableAttributes();
         $this->registerAttributeCollection();
@@ -118,6 +120,18 @@ class DataFeedWatch_Connector_Helper_Registry
                 ->addVisibleFilter()
                 ->addFieldToFilter('attribute_code', 'visibility')->getFirstItem();
             Mage::register(self::DFW_VISIBILITY_ATTRIBUTE_KEY, $visibilityAttribute);
+        }
+    }
+
+    protected function registerParentIdAttribute()
+    {
+        $registry = Mage::registry(self::DFW_PARENT_ID_ATTRIBUTE_KEY);
+        if (empty($registry)) {
+            /** @var Mage_Catalog_Model_Resource_Eav_Attribute $statusAttribute */
+            $attribute = Mage::getResourceModel('catalog/product_attribute_collection')
+                ->addVisibleFilter()
+                ->addFieldToFilter('attribute_code', 'dfw_parent_ids')->getFirstItem();
+            Mage::register(self::DFW_PARENT_ID_ATTRIBUTE_KEY, $attribute);
         }
     }
 

@@ -63,7 +63,7 @@ class DataFeedWatch_Connector_Model_Observer
         $resource       = Mage::getSingleton('core/resource');
         $connection     = $resource->getConnection('core_write');
         $connection->delete(Mage::getModel('core/resource')->getTableName('datafeedwatch_connector/updated_products'),
-            sprintf('product_id = %s', $product->getId()));
+            sprintf('dfw_prod_id = %s', $product->getId()));
 
         return $this;
     }
@@ -115,6 +115,51 @@ class DataFeedWatch_Connector_Model_Observer
 
             return null;
         }
+    }
+
+    public function checkAndUpdateAttributeInheritance(Varien_Event_Observer $observer)
+    {
+        $attribute = $observer->getAttribute();
+        if (!$attribute->getCanConfigureImport() && !$attribute->isObjectNew()) {
+            $attribute->setImportToDfw($attribute->getOrigData('import_to_dfw'));
+        }
+        if ($attribute->hasCanConfigureInheritance() && !$attribute->getCanConfigureInheritance() && !$attribute->isObjectNew()) {
+            $attribute->setInheritance($attribute->getOrigData('inheritance'));
+        }
+
+        if ($this->canSaveUpdateDate($attribute)) {
+            $this->helper()->updateLastInheritanceUpdateDate();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $attribute
+     *
+     * @return bool
+     */
+    protected function canSaveUpdateDate($attribute)
+    {
+        return ($attribute->dataHasChangedFor('inheritance') && (int)$attribute->getOrigData('import_to_dfw') === 1)
+               || $attribute->dataHasChangedFor('import_to_dfw')
+               || (int)$attribute->getData('import_to_dfw') === 1
+               || $attribute->isObjectNew();
+    }
+
+    public function changeChildProductUpdatedAt(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Catalog_Model_Product $product */
+        $product = $observer->getProduct();
+
+        if ($product->isConfigurable()) {
+            $childProducts = $product->getTypeInstance(true)->getUsedProducts(null, $product);
+            foreach ($childProducts as $child) {
+                $child->setUpdatedAt($product->getUpdatedAt())->save();
+            }
+        }
+
+        return $this;
     }
 
     /**

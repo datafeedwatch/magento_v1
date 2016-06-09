@@ -79,6 +79,30 @@
                     </datafeedwatch_connector_product_delete_before>
                 </observers>
             </catalog_product_delete_before>
+            <catalog_product_save_after>
+                <observers>
+                    <datafeedwatch_connector_product_delete_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>changeChildProductUpdatedAt</method>
+                    </datafeedwatch_connector_product_delete_before>
+                </observers>
+            </catalog_product_save_after>
+            <catalog_entity_attribute_save_before>
+                <observers>
+                    <datafeedwatch_connector_attribute_save_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>checkAndUpdateAttributeInheritance</method>
+                    </datafeedwatch_connector_attribute_save_before>
+                </observers>
+            </catalog_entity_attribute_save_before>
+            <catalog_entity_attribute_delete_before>
+                <observers>
+                    <datafeedwatch_connector_attribute_delete_before>
+                        <class>datafeedwatch_connector/observer</class>
+                        <method>updateLastInheritanceUpdateDate</method>
+                    </datafeedwatch_connector_attribute_delete_before>
+                </observers>
+            </catalog_entity_attribute_delete_before>
         </events>
     </global>
 

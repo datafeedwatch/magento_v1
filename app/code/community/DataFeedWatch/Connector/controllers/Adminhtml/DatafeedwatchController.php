@@ -99,6 +99,7 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
         $attribute = Mage::getModel('catalog/resource_eav_attribute')->load($attributeId);
         /* @var $helper Mage_Catalog_Helper_Product */
         $attribute->setInheritance($value)->save();
+        $this->helper()->updateLastInheritanceUpdateDate();
     }
 
     public function saveAttributeImportAction()
@@ -109,6 +110,7 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
         /* @var $attribute Mage_Catalog_Model_Entity_Attribute */
         $attribute = Mage::getModel('catalog/resource_eav_attribute')->load($attributeId);
         $attribute->setImportToDfw($value)->save();
+        $this->helper()->updateLastInheritanceUpdateDate();
 
     }
 
@@ -118,5 +120,13 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
     protected function getApiUserModel()
     {
         return Mage::getModel('datafeedwatch_connector/api_user');
+    }
+
+    /**
+     * @return DataFeedWatch_Connector_Helper_Data
+     */
+    public function helper()
+    {
+        return Mage::helper('datafeedwatch_connector');
     }
 }

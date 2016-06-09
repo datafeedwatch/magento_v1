@@ -166,6 +166,7 @@ class DataFeedWatch_Connector_Helper_Data
             'sku',
             'updated_at',
             'ignore_datafeedwatch',
+            'dfw_parent_ids',
         );
 
         $cannotConfigureInheritanceField = array(
@@ -180,6 +181,7 @@ class DataFeedWatch_Connector_Helper_Data
             'thumbnail',
             'updated_at',
             'ignore_datafeedwatch',
+            'dfw_parent_ids',
         );
 
         $enableImport = array(
@@ -203,6 +205,7 @@ class DataFeedWatch_Connector_Helper_Data
         $inheritanceData = array(
             'updated_at'            => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::PARENT_OPTION_ID,
             'ignore_datafeedwatch'  => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID,
+            'dfw_parent_ids'        => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID,
         );
 
         $catalogAttributes = Mage::getResourceModel('catalog/product_attribute_collection');

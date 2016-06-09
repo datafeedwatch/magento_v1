@@ -38,15 +38,15 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection
     {
         $this->helper()->log($options);
         $this->optionsFilters = $options;
-        if (isset($options['group'])) {
-            $this->canGroup = $options['group'];
-        }
         $this->applyStoreFilter();
         $this->registryHelper()->initImportRegistry($this->getStoreId());
-        $this->addRuleDate();
-        $this->joinRelationsTable();
         $this->joinVisibilityTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::VISIBILITY_TABLE_ALIAS_DEFAULT_STORE, '0');
         $this->joinVisibilityTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::ORIGINAL_VISIBILITY_TABLE_ALIAS, $this->getStoreId());
+        $this->fillParentIds();
+        $this->addAttributeToSelect('dfw_parent_ids');
+        $this->joinParentIdsTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::PARENT_IDS_TABLE_ALIAS_DEFAULT_STORE, '0');
+        $this->joinParentIdsTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::ORIGINAL_PARENT_IDS_TABLE_ALIAS, $this->getStoreId());
+        $this->addRuleDate();
         $this->applyTypeFilter();
         $this->joinQty();
         $this->addFinalPrice();
@@ -54,11 +54,28 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection
         $this->applyStatusFilter();
         $this->applyUpdatedAtFilter();
         $this->addAttributeToSelect('ignore_datafeedwatch');
-        $this->addAttributeToFilter('ignore_datafeedwatch', array(array('null' => true),array('neq' => 1)), 'left');
-
+        $this->addAttributeToFilter('ignore_datafeedwatch', array(array('null' => true), array('neq' => 1)), 'left');
 
         $this->setPage($this->optionsFilters['page'], $this->optionsFilters['per_page']);
         $this->helper()->sqlLog($this->getSelect()->__toString());
+
+        return $this;
+    }
+    
+    public function fillParentIds()
+    {
+        Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $collection = Mage::getResourceModel('catalog/product_collection');
+        foreach($collection as $product) {
+            $parentIds = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
+            if (!empty($parentIds)) {
+//        $product->setDfwParentIds(implode(',', $parentIds));
+                $product->setDfwParentIds(current($parentIds));
+                $product->getResource()->saveAttribute($product, 'dfw_parent_ids');
+            }
+        }
+        Mage::app()->setCurrentStore($this->getStoreId());
 
         return $this;
     }
@@ -147,11 +164,15 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection
      */
     protected function addParentData()
     {
-        $this->joinRelationsTable();
         $parentCollection = $this->getParentProductsCollection();
         $parentCollection = $parentCollection->getItems();
         foreach ($this->getItems() as $product) {
             $parentId = $product->getParentId();
+            $parentId = explode(',', $parentId);
+            if (is_array($parentId)) {
+                $parentId = current($parentId);
+            }
+
             if (empty($parentId) || !isset($parentCollection[$parentId])) {
                 continue;
             }

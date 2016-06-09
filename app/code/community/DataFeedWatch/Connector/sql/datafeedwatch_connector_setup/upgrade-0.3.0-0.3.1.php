@@ -84,3 +84,46 @@ if ($installer->tableExists(($table))) {
     $connection->dropTable($table);
     $installer->endSetup();
 }
+
+/** @var string $table */
+$table          = $installer->getTable('datafeedwatch_connector/updated_products');
+if ($connection->tableColumnExists($table, 'product_id')) {
+    $connection->changeColumn($table, 'product_id', 'dfw_prod_id', array(
+        'identity' => true,
+        'unsigned' => true,
+        'nullable' => false,
+        'primary'  => true,
+        'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+    ));
+}
+
+/** @var Mage_Catalog_Model_Resource_Setup $attributeInstaller */
+$attributeInstaller = Mage::getResourceModel('catalog/setup','catalog_setup');
+$attributeId = $attributeInstaller->getAttribute(Mage_Catalog_Model_Product::ENTITY, 'dfw_parent_ids', 'attribute_id');
+if (empty($attributeId)) {
+    $attributeInstaller->addAttribute(
+        Mage_Catalog_Model_Product::ENTITY,
+        'dfw_parent_ids',
+        array(
+            'type'                          => 'varchar',
+            'backend'                       => '',
+            'frontend'                      => '',
+            'input'                         => 'text',
+            'class'                         => '',
+            'global'                        => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                       => true,
+            'required'                      => false,
+            'user_defined'                  => true,
+            'default'                       => '',
+            'searchable'                    => false,
+            'filterable'                    => false,
+            'comparable'                    => false,
+            'visible_on_front'              => false,
+            'unique'                        => false,
+            'group'                         => 'General',
+            'can_configure_inheritance'     => 0,
+            'inheritance'                   => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID,
+            'can_configure_import'          => 0,
+            'import_to_dfw'                 => 0,
+        ));
+}
