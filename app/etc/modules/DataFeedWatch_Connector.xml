@@ -5,9 +5,8 @@
       <active>true</active>
       <codePool>community</codePool>
       <depends>
-        <Mage_Api />
-          <Mage_CatalogRule/>
-          <Mage_SalesRule/>
+        <Mage_CatalogRule />
+        <Mage_Catalog />
       </depends>
     </DataFeedWatch_Connector>
   </modules>

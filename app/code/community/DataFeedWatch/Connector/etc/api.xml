@@ -1,38 +1,35 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <config>
     <api>
         <resources>
-            <datafeedwatch translate="title" module="connector">
+            <datafeedwatch translate="title" module="datafeedwatch_connector">
                 <title>DataFeedWatch API</title>
-                <model>connector/datafeedwatch_api</model>
-                <methods>
-                    <version translate="title" module="connector">
+                <model>datafeedwatch_connector/api</model>
+                <methods>					
+                    <version translate="title" module="datafeedwatch_connector">
                         <title>Retrieve extension version</title>
                     </version>
-                    <products translate="title" module="connector">
-                        <title>Retrieve products</title>
-                    </products>
-                    <product_count translate="title" module="connector">
-                        <title>Retrieve product count</title>
-                    </product_count>
-                    <stores translate="title" module="connector">
-                        <title>Retrieve stores</title>
-                    </stores>
-                    <product_ids translate="title" module="connector">
-                        <title>Retrieve Product Ids</title>
-                    </product_ids>
-                    <synced_fields translate="title" module="connector">
-                        <title>Retrieve selected attributes</title>
-                    </synced_fields>
-                    <gmt_offset translate="title" module="connector">
+                    <gmt_offset translate="title" module="datafeedwatch_connector">
                         <title>Retrieve datetime in GMT</title>
                     </gmt_offset>
-                    <updated_products translate="title" module="connector">
+                    <stores translate="title" module="datafeedwatch_connector">
+                        <title>Retrieve stores</title>
+                    </stores>
+                    <products translate="title" module="datafeedwatch_connector">
+                        <title>Retrieve products</title>
+                    </products>
+                    <product_count translate="title" module="datafeedwatch_connector">
+                        <title>Retrieve product count</title>
+                    </product_count>
+                    <updated_products translate="title" module="datafeedwatch_connector">
                         <title>Retrieve products based on last update</title>
                     </updated_products>
-                    <updated_product_count translate="title" module="connector">
+                    <updated_product_count translate="title" module="datafeedwatch_connector">
                         <title>Retrieve product count based on last update</title>
                     </updated_product_count>
+                    <product_ids translate="title" module="datafeedwatch_connector">
+                        <title>Retrieve Product Ids</title>
+                    </product_ids>
                 </methods>
             </datafeedwatch>
         </resources>

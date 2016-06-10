@@ -1,0 +1,13 @@
+#inheritance_grid { width: 950px; }
+#inheritance_grid .attribute_inheritance_grid_header > div { font-weight: bolder; text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; }
+#inheritance_grid > * > div, #inheritance_grid > * > * > div { display: inline-block; }
+#inheritance_grid > * > .attribute_name, #inheritance_grid > * > * > .attribute_name { width: 310px; }
+#inheritance_grid > * > .attribute_import, #inheritance_grid > * > * > .attribute_import, #inheritance_grid > * > * > .attribute_import select { width: 100px; text-align: center }
+#inheritance_grid > * > .attribute_inheritance, #inheritance_grid > * > * > .attribute_inheritance { width: 530px; }
+#inheritance_grid > * > .attribute_inheritance > div, #inheritance_grid > * > * > .attribute_inheritance > div { width: 173px; display: inline-block; text-align: center; }
+#inheritance_grid > #attribute_inheritance_grid_items > .attribute_item > div { margin: 5px 0; }
+#inheritance_grid > #attribute_inheritance_grid_items > .attribute_item:not(:last-of-type) > div { border-bottom: 1px dotted #000; padding-bottom: 5px; }
+#inheritance_grid .inheritance_pager { display: block; width: 100%; text-align: right; border-top: 1px solid #000; margin-top: 5px; padding-top: 10px; }
+#inheritance_grid .inheritance_pager > span:not(:last-child):after { content: "|"; margin: 0 10px }
+#inheritance_grid .inheritance_pager select, #inheritance_grid .inheritance_pager input { width: 50px; }
+#inheritance_grid .inheritance_pager .page .navigation { vertical-align: middle; }
