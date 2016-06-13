@@ -36,7 +36,7 @@ class DataFeedWatch_Connector_Helper_Registry
             $categories = Mage::getResourceModel('catalog/category_collection')
                 ->addNameToResult()
                 ->setStoreId($storeId)
-                ->addFieldToFilter('level', array('gt' => 0))
+                ->addFieldToFilter('level', array('gt' => 1))
                 ->getItems();
 
             Mage::register(self::ALL_CATEGORIES_ARRAY_KEY, $categories);
