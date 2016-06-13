@@ -109,7 +109,30 @@ class DataFeedWatch_Connector_Model_Observer
         }
 
         try {
-            return $configModel->getGroups()[reset($xpath)]['fields'][end($xpath)]['value'];
+            $group = reset($xpath);
+            $field = end($xpath);
+            $configPath = $configModel->getGroups();
+            if (is_array($configPath) && array_key_exists($group, $configPath)) {
+                $configPath = $configPath[$group];
+            } else {
+                return null;
+            }
+            if (is_array($configPath) && array_key_exists('fields', $configPath)) {
+                $configPath = $configPath['fields'];
+            } else {
+                return null;
+            }
+            if (is_array($configPath) && array_key_exists($field, $configPath)) {
+                $configPath = $configPath[$field];
+            } else {
+                return null;
+            }
+
+            if (is_array($configPath) && array_key_exists('value', $configPath)) {
+                return $configPath['value'];
+            } else {
+                return null;
+            }
         } catch (Exception $e) {
             $this->helper()->log($e->getMessage());
 
