@@ -41,7 +41,7 @@ class DataFeedWatch_Connector_Model_Product
         $this->importData['image_url']                  = $this->getBaseImageUrl();
         $this->importData['product_url']                = $this->getProductUrl();
         $this->importData['product_url_rewritten']      = $this->getProductUrlRewritten();
-        $this->importData['is_in_stock']                = $this->getIsInStock();
+        $this->importData['is_in_stock']                = (int) $this->getIsInStock();
         $this->getCategoryPathToImport();
         $this->setDataToImport($this->getCategoriesNameToImport(false));
 
