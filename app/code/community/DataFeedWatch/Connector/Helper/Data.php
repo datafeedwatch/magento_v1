@@ -200,12 +200,18 @@ class DataFeedWatch_Connector_Helper_Data
             'special_from_date',
             'special_to_date',
             'updated_at',
+            'color',
+            'size',
+            'gender',
+            'manufacturer',
+            'material',
         );
 
         $inheritanceData = array(
             'updated_at'            => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::PARENT_OPTION_ID,
             'ignore_datafeedwatch'  => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID,
             'dfw_parent_ids'        => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID,
+            'status'                => DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_THEN_PARENT_OPTION_ID,
         );
 
         $catalogAttributes = Mage::getResourceModel('catalog/product_attribute_collection');
