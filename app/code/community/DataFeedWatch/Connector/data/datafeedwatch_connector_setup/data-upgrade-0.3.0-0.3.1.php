@@ -1,13 +1,16 @@
 <?php
-$attribute = Mage::getResourceModel('catalog/product_attribute_collection')
-                 ->addVisibleFilter()
-                 ->addFieldToFilter('attribute_code', 'dfw_parent_ids')->getFirstItem();
+/** @var Mage_Catalog_Model_Resource_Setup $attributeInstaller */
+$attributeInstaller = Mage::getResourceModel('catalog/setup', 'catalog_setup');
+$attributeId = $attributeInstaller->getAttribute(Mage_Catalog_Model_Product::ENTITY, 'dfw_parent_ids', 'attribute_id');
+if (!empty($attributeId)) {
+    $attribute = Mage::getModel('eav/entity_attribute')->load($attributeId);
 
-$attribute->setImportToDfw(0)
-          ->setCanConfigureImport(0)
-          ->setCanConfigureInheritance(0)
-          ->setInheritance(DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID)
-          ->save();
+    $attribute->setImportToDfw(0)
+              ->setCanConfigureImport(0)
+              ->setCanConfigureInheritance(0)
+              ->setInheritance(DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_OPTION_ID)
+              ->save();
+}
 
 $currentStoreId = Mage::app()->getStore()->getId();
 
