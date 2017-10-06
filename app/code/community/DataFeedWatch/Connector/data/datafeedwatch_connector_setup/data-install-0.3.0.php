@@ -1,9 +1,4 @@
 <?php
-/** @var DataFeedWatch_Connector_Model_Api_User $apiUser */
-$apiUser = Mage::getModel('datafeedwatch_connector/api_user');
-$apiUser->loadDfwUser();
-$apiUser->createDfwUser();
-
 /** @var Mage_Catalog_Model_Resource_Setup $attributeInstaller */
 $attributeInstaller = Mage::getResourceModel('catalog/setup','catalog_setup');
 $attributeId = $attributeInstaller->getAttribute(Mage_Catalog_Model_Product::ENTITY, 'dfw_parent_ids');
@@ -64,9 +59,18 @@ if (!$attributeInstaller->getAttribute(Mage_Catalog_Model_Product::ENTITY, $attr
     ));
 }
 
-Mage::helper('datafeedwatch_connector')->restoreOriginalAttributesConfig();
+$currentTimestamp = time();
+$createdAt   = strftime('%Y-%m-%d %H:%M:00', $currentTimestamp);
+$scheduledAt = strftime('%Y-%m-%d %H:%M:00', $currentTimestamp + 120);
+Mage::getModel('cron/schedule')
+    ->setJobCode('datafeedwatch_connector_installer')
+    ->setCreatedAt($createdAt)
+    ->setScheduledAt($scheduledAt)->setStatus(Mage_Cron_Model_Schedule::STATUS_PENDING)->save();
 
-/** @var DataFeedWatch_Connector_Model_Cron $cron */
-$cron = Mage::getModel('datafeedwatch_connector/cron');
+$scheduledAt = strftime('%Y-%m-%d %H:%M:00', $currentTimestamp + 240);
+Mage::getModel('cron/schedule')
+    ->setJobCode('datafeedwatch_connector_fill_updated_at_table')
+    ->setCreatedAt($createdAt)
+    ->setScheduledAt($scheduledAt)->setStatus(Mage_Cron_Model_Schedule::STATUS_PENDING)->save();
 
-$cron->reindex();
+Mage::helper('datafeedwatch_connector')->setInstallationIncomplete();

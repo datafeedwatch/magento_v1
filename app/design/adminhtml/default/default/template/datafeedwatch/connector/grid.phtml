@@ -1,17 +1,19 @@
 <?php /** @var DataFeedWatch_Connector_Block_Adminhtml_System_Config_Grid $this */ ?>
-<input type="hidden" id="inheritance_grid_action_url" value="<?php echo $this->getActionUrl() ?>" />
-<input type="hidden" id="save_inheritance_action_url" value="<?php echo $this->getSaveInheritanceActionUrl() ?>" />
-<input type="hidden" id="save_import_action_url" value="<?php echo $this->getSaveImportActionUrl() ?>" />
-<div id="inheritance_grid">
-    <div class="attribute_inheritance_grid_header">
-        <div class="attribute_name"><?php echo $this->helper('adminhtml')->__('Name')?></div>
-        <div class="attribute_import"><?php echo $this->__('Import')?></div>
-        <div class="attribute_inheritance">
-            <div class="inheritance_child"><?php echo $this->__('Child')?></div>
-            <div class="inheritance_parent"><?php echo $this->__('Parent')?></div>
-            <div class="inheritance_child_then_parent"><?php echo $this->__('Child Then Parent')?></div>
+<?php if (Mage::helper('datafeedwatch_connector')->getInstallationComplete()): ?>
+    <input type="hidden" id="inheritance_grid_action_url" value="<?php echo $this->getActionUrl() ?>" />
+    <input type="hidden" id="save_inheritance_action_url" value="<?php echo $this->getSaveInheritanceActionUrl() ?>" />
+    <input type="hidden" id="save_import_action_url" value="<?php echo $this->getSaveImportActionUrl() ?>" />
+    <div id="inheritance_grid">
+        <div class="attribute_inheritance_grid_header">
+            <div class="attribute_name"><?php echo $this->helper('adminhtml')->__('Name')?></div>
+            <div class="attribute_import"><?php echo $this->__('Import')?></div>
+            <div class="attribute_inheritance">
+                <div class="inheritance_child"><?php echo $this->__('Child')?></div>
+                <div class="inheritance_parent"><?php echo $this->__('Parent')?></div>
+                <div class="inheritance_child_then_parent"><?php echo $this->__('Child Then Parent')?></div>
+            </div>
         </div>
+        <div id="attribute_inheritance_grid_items"></div>
+        <p class="note"><?php echo $this->__('Every change is save automatically') ?></p>
     </div>
-    <div id="attribute_inheritance_grid_items"></div>
-    <p class="note"><?php echo $this->__('Every change is save automatically') ?></p>
-</div>
+<?php endif; ?>
