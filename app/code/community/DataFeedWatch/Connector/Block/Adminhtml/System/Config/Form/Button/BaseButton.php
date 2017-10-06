@@ -1,8 +1,10 @@
 <?php
 
-class DataFeedWatch_Connector_Block_Adminhtml_System_Config_Form_Button_Extort
+class DataFeedWatch_Connector_Block_Adminhtml_System_Config_Form_Button_BaseButton
     extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
+    public $onClick = '#';
+    public $label   = 'Button';
     /**
      * @param Varien_Data_Form_Element_Abstract $element
      * @return mixed
@@ -10,16 +12,12 @@ class DataFeedWatch_Connector_Block_Adminhtml_System_Config_Form_Button_Extort
      */
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        $url        = Mage::helper('adminhtml')->getUrl('adminhtml/datafeedwatch/extort');
-        $onclick    = sprintf("setLocation('%s')", $url);
-        $html       = $this->getLayout()
+        return $this->getLayout()
             ->createBlock('adminhtml/widget_button')
             ->setType('button')
             ->setClass('scalable')
-            ->setLabel($this->__('Get All'))
-            ->setOnClick($onclick)
+            ->setLabel($this->__($this->label))
+            ->setOnClick($this->onClick)
             ->toHtml();
-
-        return $html;
     }
 }

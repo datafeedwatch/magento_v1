@@ -54,7 +54,7 @@
                         <connector_get_all translate="label" module="datafeedwatch_connector">
                             <label>Get all product data with next download</label>
                             <frontend_type>button</frontend_type>
-                            <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_extort</frontend_model>
+                            <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_force</frontend_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                         </connector_get_all>

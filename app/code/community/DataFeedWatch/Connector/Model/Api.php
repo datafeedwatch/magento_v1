@@ -12,7 +12,7 @@ class DataFeedWatch_Connector_Model_Api
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function version()
     {
@@ -20,11 +20,11 @@ class DataFeedWatch_Connector_Model_Api
         $version = Mage::getConfig()->getNode()->modules->DataFeedWatch_Connector->version->__toString();
         $this->helper()->log($version);
 
-        return $version;
+        return array($version);
     }
 
     /**
-     * @return int
+     * @return array
      */
     public function gmt_offset()
     {
@@ -35,7 +35,7 @@ class DataFeedWatch_Connector_Model_Api
         $offset   = (int)($timeZone->getOffset($time) / 3600);
         $this->helper()->log($offset);
 
-        return $offset;
+        return array($offset);
     }
 
     /**
@@ -59,6 +59,9 @@ class DataFeedWatch_Connector_Model_Api
         $this->helper()->log('datafeedwatch.products');
         $this->unsetUpdatedOptions($options);
         $this->filterOptions($options);
+        if (!isset($options['fillParentIds']) && $options['page'] === 1) {
+            $options['fillParentIds'] = true;
+        }
         $collection = $this->getProductCollection($options);
         $collection->applyInheritanceLogic();
 
@@ -67,18 +70,19 @@ class DataFeedWatch_Connector_Model_Api
 
     /**
      * @param array $options
-     * @return int
+     * @return array
      */
     public function product_count($options = array())
     {
         $this->helper()->log('datafeedwatch.product_count');
         $this->unsetUpdatedOptions($options);
+        $options['fillParentIds'] = false;
         $this->filterOptions($options);
         $collection = $this->getProductCollection($options);
         $amount     = (int) $collection->getSize();
         $this->helper()->log(sprintf('datafeedwatch.product_count %d', $amount));
 
-        return $amount;
+        return array($amount);
     }
 
     /**
@@ -89,6 +93,9 @@ class DataFeedWatch_Connector_Model_Api
     {
         $this->helper()->log('datafeedwatch.updated_products');
         $this->filterOptions($options);
+        if (!isset($options['fillParentIds']) && $options['page'] === 1) {
+            $options['fillParentIds'] = true;
+        }
         if (!$this->isFromDateEarlierThanConfigDate($options)) {
             $collection = $this->getProductCollection($options);
             $collection->applyInheritanceLogic();
@@ -103,12 +110,13 @@ class DataFeedWatch_Connector_Model_Api
 
     /**
      * @param array $options
-     * @return int
+     * @return array
      */
     public function updated_product_count($options = array())
     {
         $this->helper()->log('datafeedwatch.updated_product_count');
         $this->filterOptions($options);
+        $options['fillParentIds'] = false;
         if (!$this->isFromDateEarlierThanConfigDate($options)) {
             $collection = $this->getProductCollection($options);
             $amount     = (int) $collection->getSize();
@@ -118,7 +126,7 @@ class DataFeedWatch_Connector_Model_Api
             $amount = $this->product_count($options);
         }
 
-        return $amount;
+        return array($amount);
     }
 
     /**
@@ -129,6 +137,7 @@ class DataFeedWatch_Connector_Model_Api
     {
         $this->helper()->log('datafeedwatch.product_ids');
         $this->filterOptions($options);
+        $options['fillParentIds'] = false;
         $collection = $this->getProductCollection($options);
 
         return $collection->getColumnValues('entity_id');
