@@ -2,7 +2,7 @@
 <config>
     <modules>
         <DataFeedWatch_Connector>
-            <version>0.3.3</version>
+            <version>0.3.6</version>
         </DataFeedWatch_Connector>
     </modules>
 
@@ -165,6 +165,14 @@
                     <model>datafeedwatch_connector/cron::reindex</model>
                 </run>
             </datafeedwatch_connector_fill_updated_at_table>
+            <datafeedwatch_connector_installer>
+                <schedule>
+                    <cron_expr />
+                </schedule>
+                <run>
+                    <model>datafeedwatch_connector/cron::installer</model>
+                </run>
+            </datafeedwatch_connector_installer>
         </jobs>
     </crontab>
 

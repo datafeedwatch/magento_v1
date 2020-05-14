@@ -1,25 +1,14 @@
 <?php
 
 class DataFeedWatch_Connector_Block_Adminhtml_System_Config_Form_Button_Refresh
-    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    extends DataFeedWatch_Connector_Block_Adminhtml_System_Config_Form_Button_BaseButton
 {
-    /**
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return mixed
-     * @throws Exception
-     */
-    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    protected function _construct()
     {
-        $url        = Mage::helper('adminhtml')->getUrl('adminhtml/datafeedwatch/refresh');
-        $onclick    = sprintf("setLocation('%s')", $url);
-        $html       = $this->getLayout()
-            ->createBlock('adminhtml/widget_button')
-            ->setType('button')
-            ->setClass('scalable')
-            ->setLabel($this->__('Refresh'))
-            ->setOnClick($onclick)
-            ->toHtml();
+        parent::_construct();
 
-        return $html;
+        $url            = Mage::helper('adminhtml')->getUrl('adminhtml/datafeedwatch/refresh');
+        $this->onClick  = sprintf("setLocation('%s')", $url);
+        $this->label    = 'Refresh';
     }
 }

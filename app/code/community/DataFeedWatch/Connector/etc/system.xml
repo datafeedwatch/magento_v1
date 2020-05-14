@@ -21,12 +21,21 @@
                     <show_in_default>1</show_in_default>
                     <expanded>1</expanded>
                     <fields>
+                        <info translate="label" module="datafeedwatch_connector">
+                            <label>INFO</label>
+                            <frontend_type>label</frontend_type>
+                            <frontend_model>datafeedwatch_connector/adminhtml_system_config_info</frontend_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <depends><installation_complete>0</installation_complete></depends>
+                        </info>
                         <connector_open translate="label" module="datafeedwatch_connector">
                             <label>Go To My DataFeedWatch</label>
                             <frontend_type>button</frontend_type>
                             <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_open</frontend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </connector_open>
                         <debug translate="label comment" module="datafeedwatch_connector">
                             <label>Debug Mode</label>
@@ -35,6 +44,7 @@
                             <source_model>adminhtml/system_config_source_enabledisable</source_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </debug>
                         <connector_refresh translate="label comment" module="datafeedwatch_connector">
                             <label>Refresh DataFeedWatch Access</label>
@@ -43,6 +53,7 @@
                             <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_refresh</frontend_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </connector_refresh>
                         <connector_add_store translate="label" module="datafeedwatch_connector">
                             <label>Add Store To DataFeedWatch</label>
@@ -50,13 +61,15 @@
                             <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_add</frontend_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </connector_add_store>
                         <connector_get_all translate="label" module="datafeedwatch_connector">
                             <label>Get all product data with next download</label>
                             <frontend_type>button</frontend_type>
-                            <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_extort</frontend_model>
+                            <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_force</frontend_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </connector_get_all>
                     </fields>
                 </general>
@@ -67,13 +80,22 @@
                     <show_in_default>1</show_in_default>
                     <expanded>1</expanded>
                     <fields>
+                        <info translate="label" module="datafeedwatch_connector">
+                            <label>INFO</label>
+                            <frontend_type>label</frontend_type>
+                            <frontend_model>datafeedwatch_connector/adminhtml_system_config_info</frontend_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <depends><installation_complete>0</installation_complete></depends>
+                        </info>
                         <product_url translate="label comment" module="datafeedwatch_connector">
                             <label>Inherit Product Url In Child Products</label>
                             <comment>Please save after change</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>1</sort_order>
+                            <sort_order>9</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </product_url>
                         <image_url translate="label comment" module="datafeedwatch_connector">
                             <label>Inherit Image Url In Child Products</label>
@@ -82,6 +104,7 @@
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </image_url>
                         <restore_original_config translate="label comment" module="datafeedwatch_connector">
                             <label>Restore Original Config</label>
@@ -90,6 +113,7 @@
                             <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_button_restore</frontend_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </restore_original_config>
                         <inheritance_grid translate="label" module="datafeedwatch_connector">
                             <label>Attributes</label>
@@ -97,6 +121,7 @@
                             <frontend_model>datafeedwatch_connector/adminhtml_system_config_form_grid_inheritance</frontend_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
+                            <depends><installation_complete>1</installation_complete></depends>
                         </inheritance_grid>
                     </fields>
                 </custom_inheritance>

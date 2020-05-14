@@ -133,10 +133,6 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection_Db
         switch($statusAttribute->getInheritance()) {
             case (string) DataFeedWatch_Connector_Model_System_Config_Source_Inheritance::CHILD_THEN_PARENT_OPTION_ID:
                 $inheritString = "IFNULL({$childString}, {$parentString})";
-//                $inheritWithStatusString = 'IFNULL(
-//                                IF(' . $childString . ' <> ' . $enable . ', ' . $parentString . ', ' . $childString . '),
-//                                ' . $childString
-//                    . ')';
                 $notVisibleIndividually = "IF({$childString} <> {$enable}, {$childString}, {$parentString})";
                 $string = 'IF(IFNULL(%5$s.value, %6$s.value) = '. Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE
                           . ', ' . $notVisibleIndividually .', '. $inheritString.')';

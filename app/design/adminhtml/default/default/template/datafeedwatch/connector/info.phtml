@@ -1,0 +1,12 @@
+<div id="dfw_info">
+    <?php echo $this->__('You need to wait until installation has been completed') ?>
+    <?php $collection = $this->getScheduledTasks() ?>
+    <?php if (count($collection)): ?>
+        <ul>
+            <?php foreach ($collection as $task): ?>
+                <li><?php echo $this->__('Task scheduled at: %s - status %s', $task->getScheduledAt(), $task->getStatus()) ?></li>
+            <?php endforeach; ?>
+        </ul>
+        <span id="time_info"><?php echo $this->__('Current server time: %s', strftime('%Y-%m-%d %H:%M:%S', time())) ?></span>
+    <?php endif; ?>
+</div>

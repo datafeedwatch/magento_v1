@@ -36,7 +36,7 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
     /**
      * @return Mage_Adminhtml_Controller_Action
      */
-    public function extortAction()
+    public function forceAction()
     {
         Mage::helper('datafeedwatch_connector')->updateLastInheritanceUpdateDate();
 
@@ -111,7 +111,6 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
         $attribute = Mage::getModel('catalog/resource_eav_attribute')->load($attributeId);
         $attribute->setImportToDfw($value)->save();
         $this->helper()->updateLastInheritanceUpdateDate();
-
     }
 
     /**
