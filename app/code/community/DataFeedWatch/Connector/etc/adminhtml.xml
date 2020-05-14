@@ -27,7 +27,7 @@
                             <config>
                                 <children>
                                     <datafeedwatch_connector>
-                                        <title>DataFeedWatch Connector</title>
+                                        <title>DataFeedWatch Connector Configuration</title>
                                     </datafeedwatch_connector>
                                 </children>
                             </config>
