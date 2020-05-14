@@ -129,4 +129,9 @@ class DataFeedWatch_Connector_Adminhtml_DatafeedwatchController
     {
         return Mage::helper('datafeedwatch_connector');
     }
+
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('admin/system/datafeedwatch_connector');
+    }
 }
