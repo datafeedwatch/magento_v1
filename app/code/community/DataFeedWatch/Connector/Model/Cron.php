@@ -55,6 +55,29 @@ class DataFeedWatch_Connector_Model_Cron
     }
 
     /**
+     * @return $this
+     */
+    public function installer()
+    {
+        Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
+        /** @var DataFeedWatch_Connector_Model_Api_User $apiUser */
+        $apiUser = Mage::getModel('datafeedwatch_connector/api_user');
+        $apiUser->loadDfwUser();
+        $apiUser->createDfwUser();
+
+        $this->helper()->restoreOriginalAttributesConfig();
+
+        $this->helper()->setInstallationComplete();
+        $types = array('config', 'collections', 'eav', 'config_api', 'config_api2');
+        foreach($types as $type) {
+            Mage::app()->getCacheInstance()->cleanType($type);
+            Mage::dispatchEvent('adminhtml_cache_refresh_type', array('type' => $type));
+        }
+
+        return $this;
+    }
+
+    /**
      * @return DataFeedWatch_Connector_Helper_Data
      */
     public function helper()

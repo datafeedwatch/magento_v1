@@ -11,3 +11,6 @@
 #inheritance_grid .inheritance_pager > span:not(:last-child):after { content: "|"; margin: 0 10px }
 #inheritance_grid .inheritance_pager select, #inheritance_grid .inheritance_pager input { width: 50px; }
 #inheritance_grid .inheritance_pager .page .navigation { vertical-align: middle; }
+
+#dfw_info {color: red; width: 500px;}
+#time_info {color: grey; }

@@ -39,3 +39,6 @@
 "Original inheritance configuration has been restored.","Oryginalna konfiguracja dziedziczenia została przywrócona."
 "Get all product data with next download","Wymuś pełen import przy następnym imporcie"
 "Get All","Wymuś"
+"You need to wait until installation has been completed","Musisz poczekać aż instalacja zostanie zakończona"
+"Task scheduled at: %s - status %s","Zadanie zaplanowane na: %s - status %s"
+"Current server time: %s","Obecny czas serwera: %s"

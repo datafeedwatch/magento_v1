@@ -9,10 +9,29 @@ class DataFeedWatch_Connector_Helper_Data
     const SQL_LOG_DIR_NAME                      = 'sql';
     const CRON_LOG_DIR_NAME                     = 'cron';
     const DEBUG_XPATH                           = 'datafeedwatch_connector/general/debug';
+    const INSTALLATION_COMPLETE                 = 'datafeedwatch_connector/general/installation_complete';
     const PRODUCT_URL_CUSTOM_INHERITANCE_XPATH  = 'datafeedwatch_connector/custom_inheritance/product_url';
     const IMAGE_URL_CUSTOM_INHERITANCE_XPATH    = 'datafeedwatch_connector/custom_inheritance/image_url';
     const LAST_CATALOGRULE_PRICE_ID_XPATH       = 'datafeedwatch_connector/custom_inheritance/last_catalogrule_price_id';
     const LAST_INHERITANCE_UPDATE_XPATH         = 'datafeedwatch_connector/custom_inheritance/last_inheritance_update';
+    const INSTALLATION_COMPLETE_CI              = 'datafeedwatch_connector/custom_inheritance/installation_complete';
+
+    public function setInstallationIncomplete()
+    {
+        Mage::getModel('core/config')->saveConfig(self::INSTALLATION_COMPLETE, 0);
+        Mage::getModel('core/config')->saveConfig(self::INSTALLATION_COMPLETE_CI, 0);
+    }
+
+    public function setInstallationComplete()
+    {
+        Mage::getModel('core/config')->saveConfig(self::INSTALLATION_COMPLETE, 1);
+        Mage::getModel('core/config')->saveConfig(self::INSTALLATION_COMPLETE_CI, 1);
+    }
+
+    public function getInstallationComplete()
+    {
+        return Mage::getStoreConfigFlag(self::INSTALLATION_COMPLETE) && Mage::getStoreConfigFlag(self::INSTALLATION_COMPLETE_CI);
+    }
 
     /**
      * @return bool

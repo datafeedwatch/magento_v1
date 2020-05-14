@@ -42,7 +42,9 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection
         $this->registryHelper()->initImportRegistry($this->getStoreId());
         $this->joinVisibilityTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::VISIBILITY_TABLE_ALIAS_DEFAULT_STORE, '0');
         $this->joinVisibilityTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::ORIGINAL_VISIBILITY_TABLE_ALIAS, $this->getStoreId());
-        $this->fillParentIds();
+        if ($options['fillParentIds']) {
+            $this->fillParentIds();
+        }
         $this->addAttributeToSelect('dfw_parent_ids');
         $this->joinParentIdsTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::PARENT_IDS_TABLE_ALIAS_DEFAULT_STORE, '0');
         $this->joinParentIdsTable(DataFeedWatch_Connector_Model_Resource_Product_Collection_Db::ORIGINAL_PARENT_IDS_TABLE_ALIAS, $this->getStoreId());
@@ -70,7 +72,6 @@ class DataFeedWatch_Connector_Model_Resource_Product_Collection
         foreach($collection as $product) {
             $parentIds = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
             if (!empty($parentIds)) {
-//        $product->setDfwParentIds(implode(',', $parentIds));
                 $product->setDfwParentIds(current($parentIds));
                 $product->getResource()->saveAttribute($product, 'dfw_parent_ids');
             }
